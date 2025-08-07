@@ -10,7 +10,7 @@ use eth2_cache_utils::{goerli, holesky, holesky_devnet, mainnet, medalla, withdr
 use fork_choice_control::AdHocBenchController;
 use fork_choice_store::StoreConfig;
 use itertools::Itertools as _;
-use log::info;
+use tracing::info;
 use pubkey_cache::PubkeyCache;
 use rand::seq::SliceRandom as _;
 use types::{
@@ -278,7 +278,7 @@ impl From<Blocks> for BlockParameters {
 }
 
 fn main() -> Result<()> {
-    binary_utils::initialize_logger(module_path!(), false)?;
+    binary_utils::initialize_tracing_logger(module_path!(), false)?;
     binary_utils::initialize_rayon()?;
     #[cfg(not(target_os = "windows"))]
     print_jemalloc_stats()?;

@@ -30,3 +30,31 @@ impl PeerLogMetrics {
             .store(target_peer_count, Ordering::Relaxed)
     }
 }
+
+#[macro_export]
+macro_rules! info_with_peers {
+    ($($arg:tt)*) => {
+        ::tracing::info!("[{}] {}", $crate::PEER_LOG_METRICS, format_args!($($arg)*));
+    };
+}
+
+#[macro_export]
+macro_rules! debug_with_peers {
+    ($($arg:tt)*) => {
+        ::tracing::debug!("[{}] {}", $crate::PEER_LOG_METRICS, format_args!($($arg)*));
+    };
+}
+
+#[macro_export]
+macro_rules! warn_with_peers {
+    ($($arg:tt)*) => {
+        ::tracing::warn!("[{}] {}", $crate::PEER_LOG_METRICS, format_args!($($arg)*));
+    };
+}
+
+#[macro_export]
+macro_rules! error_with_peers {
+    ($($arg:tt)*) => {
+        ::tracing::error!("[{}] {}", $crate::PEER_LOG_METRICS, format_args!($($arg)*));
+    };
+}
