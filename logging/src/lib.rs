@@ -5,7 +5,7 @@ use derive_more::Display;
 pub static PEER_LOG_METRICS: PeerLogMetrics = PeerLogMetrics::new(0);
 
 #[derive(Display, Debug)]
-#[display("peers: {connected_peer_count:?}/{target_peer_count:?}")]
+#[display("[{connected_peer_count:?}/{target_peer_count:?}]")]
 pub struct PeerLogMetrics {
     connected_peer_count: AtomicUsize,
     target_peer_count: AtomicUsize,
@@ -31,44 +31,100 @@ impl PeerLogMetrics {
     }
 }
 
+
 #[macro_export]
 macro_rules! info_with_peers {
-    ($($arg:tt)*) => {
-        ::tracing::info!("[{}] {}", $crate::PEER_LOG_METRICS, format_args!($($arg)*));
+    ( $( $field:ident = $val:expr ),+ , $fmt:literal $(, $arg:expr)* ) => {
+        ::tracing::info!(
+            peers = %$crate::PEER_LOG_METRICS,
+            $( $field = %$val ),+,
+            $fmt $(, $arg)*
+        )
+    };
+    ( $fmt:literal $(, $arg:expr)* $(,)?) => {
+        ::tracing::info!(
+            peers = %$crate::PEER_LOG_METRICS,
+            $fmt $(, $arg)*
+        )
     };
 }
 
 #[macro_export]
 macro_rules! debug_with_peers {
-    ($($arg:tt)*) => {
-        ::tracing::debug!("[{}] {}", $crate::PEER_LOG_METRICS, format_args!($($arg)*));
+    ( $( $field:ident = $val:expr ),+ , $fmt:literal $(, $arg:expr)* ) => {
+        ::tracing::debug!(
+            peers = %$crate::PEER_LOG_METRICS,
+            $( $field = %$val ),+,
+            $fmt $(, $arg)*
+        )
+    };
+    ( $fmt:literal $(, $arg:expr)* $(,)?) => {
+        ::tracing::debug!(
+            peers = %$crate::PEER_LOG_METRICS,
+            $fmt $(, $arg)*
+        )
     };
 }
 
 #[macro_export]
 macro_rules! warn_with_peers {
-    ($($arg:tt)*) => {
-        ::tracing::warn!("[{}] {}", $crate::PEER_LOG_METRICS, format_args!($($arg)*));
+    ( $( $field:ident = $val:expr ),+ , $fmt:literal $(, $arg:expr)* ) => {
+        ::tracing::warn!(
+            peers = %$crate::PEER_LOG_METRICS,
+            $( $field = %$val ),+,
+            $fmt $(, $arg)*
+        )
     };
-}
-
-#[macro_export]
-macro_rules! error_with_peers {
-    ($($arg:tt)*) => {
-        ::tracing::error!("[{}] {}", $crate::PEER_LOG_METRICS, format_args!($($arg)*));
+    ( $fmt:literal $(, $arg:expr)* $(,)?) => {
+        ::tracing::warn!(
+            peers = %$crate::PEER_LOG_METRICS,
+            $fmt $(, $arg)*
+        )
     };
 }
 
 #[macro_export]
 macro_rules! trace_with_peers {
-    ($($arg:tt)*) => {
-        ::tracing::trace!("[{}] {}", $crate::PEER_LOG_METRICS, format!($($arg)*));
+    ( $( $field:ident = $val:expr ),+ , $fmt:literal $(, $arg:expr)* ) => {
+        ::tracing::trace!(
+            peers = %$crate::PEER_LOG_METRICS,
+            $( $field = %$val ),+,
+            $fmt $(, $arg)*
+        )
+    };
+    ( $fmt:literal $(, $arg:expr)* $(,)?) => {
+        ::tracing::trace!(
+            peers = %$crate::PEER_LOG_METRICS,
+            $fmt $(, $arg)*
+        )
     };
 }
 
 #[macro_export]
+macro_rules! error_with_peers {
+    ( $( $field:ident = $val:expr ),+ , $fmt:literal $(, $arg:expr)* ) => {
+        ::tracing::error!(
+            peers = %$crate::PEER_LOG_METRICS,
+            $( $field = %$val ),+,
+            $fmt $(, $arg)*
+        )
+    };
+    ( $fmt:literal $(, $arg:expr)* $(,)?) => {
+        ::tracing::error!(
+            peers = %$crate::PEER_LOG_METRICS,
+            $fmt $(, $arg)*
+        )
+    };
+}
+
+
+#[macro_export]
 macro_rules! crit {
     ($($arg:tt)*) => {
-        ::tracing::error!(error_type = "crit", $($arg)*);
+        ::tracing::error!(
+            error_type = "crit", 
+            peers = %$crate::PEER_LOG_METRICS, 
+            $($arg)*
+        );
     };
 }

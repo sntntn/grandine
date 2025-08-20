@@ -353,6 +353,10 @@ fn try_main() -> Result<()> {
     binary_utils::initialize_rayon()?;
     
     info_with_peers!("Tracing started!");
+    // let x1 = "smth1";
+    // let x2 = "smth2";
+    // let x3 = "smth3";
+    // logging::info_with_peers!(field1=x1, field2=x2, "Tracing started! {}",x3);
 
     let config = GrandineArgs::try_parse()?
         .try_into_config()
