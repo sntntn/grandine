@@ -31,88 +31,52 @@ impl PeerLogMetrics {
     }
 }
 
-
 #[macro_export]
 macro_rules! info_with_peers {
-    ( $( $field:ident = $val:expr ),+ , $fmt:literal $(, $arg:expr)* ) => {
+    ( $( $rest:tt )* ) => {
         ::tracing::info!(
             peers = %$crate::PEER_LOG_METRICS,
-            $( $field = %$val ),+,
-            $fmt $(, $arg)*
-        )
-    };
-    ( $fmt:literal $(, $arg:expr)* $(,)?) => {
-        ::tracing::info!(
-            peers = %$crate::PEER_LOG_METRICS,
-            $fmt $(, $arg)*
+            $( $rest )*
         )
     };
 }
 
 #[macro_export]
 macro_rules! debug_with_peers {
-    ( $( $field:ident = $val:expr ),+ , $fmt:literal $(, $arg:expr)* ) => {
+    ( $( $rest:tt )* ) => {
         ::tracing::debug!(
             peers = %$crate::PEER_LOG_METRICS,
-            $( $field = %$val ),+,
-            $fmt $(, $arg)*
-        )
-    };
-    ( $fmt:literal $(, $arg:expr)* $(,)?) => {
-        ::tracing::debug!(
-            peers = %$crate::PEER_LOG_METRICS,
-            $fmt $(, $arg)*
+            $( $rest )*
         )
     };
 }
 
 #[macro_export]
 macro_rules! warn_with_peers {
-    ( $( $field:ident = $val:expr ),+ , $fmt:literal $(, $arg:expr)* ) => {
+    ( $( $rest:tt )* ) => {
         ::tracing::warn!(
             peers = %$crate::PEER_LOG_METRICS,
-            $( $field = %$val ),+,
-            $fmt $(, $arg)*
-        )
-    };
-    ( $fmt:literal $(, $arg:expr)* $(,)?) => {
-        ::tracing::warn!(
-            peers = %$crate::PEER_LOG_METRICS,
-            $fmt $(, $arg)*
+            $( $rest )*
         )
     };
 }
 
 #[macro_export]
 macro_rules! trace_with_peers {
-    ( $( $field:ident = $val:expr ),+ , $fmt:literal $(, $arg:expr)* ) => {
+    ( $( $rest:tt )* ) => {
         ::tracing::trace!(
             peers = %$crate::PEER_LOG_METRICS,
-            $( $field = %$val ),+,
-            $fmt $(, $arg)*
-        )
-    };
-    ( $fmt:literal $(, $arg:expr)* $(,)?) => {
-        ::tracing::trace!(
-            peers = %$crate::PEER_LOG_METRICS,
-            $fmt $(, $arg)*
+            $( $rest )*
         )
     };
 }
 
 #[macro_export]
 macro_rules! error_with_peers {
-    ( $( $field:ident = $val:expr ),+ , $fmt:literal $(, $arg:expr)* ) => {
+    ( $( $rest:tt )* ) => {
         ::tracing::error!(
             peers = %$crate::PEER_LOG_METRICS,
-            $( $field = %$val ),+,
-            $fmt $(, $arg)*
-        )
-    };
-    ( $fmt:literal $(, $arg:expr)* $(,)?) => {
-        ::tracing::error!(
-            peers = %$crate::PEER_LOG_METRICS,
-            $fmt $(, $arg)*
+            $( $rest )*
         )
     };
 }
@@ -120,11 +84,11 @@ macro_rules! error_with_peers {
 
 #[macro_export]
 macro_rules! crit {
-    ($($arg:tt)*) => {
+    ( $( $rest:tt )* ) => {
         ::tracing::error!(
-            error_type = "crit", 
-            peers = %$crate::PEER_LOG_METRICS, 
-            $($arg)*
-        );
+            error_type = "crit",
+            peers = %$crate::PEER_LOG_METRICS,
+            $( $rest )*
+        )
     };
 }
