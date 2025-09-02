@@ -100,7 +100,9 @@ impl<'de> Deserialize<'de> for ClientCode {
                     "PM" => ClientCode::Prysm,
                     "RH" => ClientCode::Reth,
                     other => {
-                        info_with_peers!("received unknown client code from execution client: {other}");
+                        info_with_peers!(
+                            "received unknown client code from execution client: {other}"
+                        );
                         ClientCode::Unknown(other.to_owned())
                     }
                 })

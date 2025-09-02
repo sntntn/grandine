@@ -156,7 +156,9 @@ impl DownloadManager {
         while from_block <= latest_block_number {
             let to_block = latest_block_number.min(from_block + DEPOSIT_BATCH_SIZE - 1);
 
-            debug_with_peers!("downloading Eth1 deposits from block {from_block} to block {to_block}");
+            debug_with_peers!(
+                "downloading Eth1 deposits from block {from_block} to block {to_block}"
+            );
 
             let deposit_event_map = self.api.get_deposit_events(from_block..=to_block).await?;
             let deposit_events = deposit_event_map.values().flatten().collect();

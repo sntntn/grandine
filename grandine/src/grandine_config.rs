@@ -113,7 +113,8 @@ impl GrandineConfig {
             Some(network) => info_with_peers!("network: {network}"),
             None => info_with_peers!(
                 "network: custom with {} preset and {} configuration",
-                chain_config.preset_base, chain_config.config_name,
+                chain_config.preset_base,
+                chain_config.config_name,
             ),
         }
 
@@ -166,7 +167,8 @@ impl GrandineConfig {
             info_with_peers!(
                 "using external block builder (API URL: {}, format: {}, \
                 default_builder_boost_factor: {default_builder_boost_factor})",
-                builder_config.builder_api_url, builder_config.builder_api_format,
+                builder_config.builder_api_url,
+                builder_config.builder_api_format,
             );
         }
 

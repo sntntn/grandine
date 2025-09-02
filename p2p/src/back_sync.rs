@@ -51,7 +51,8 @@ impl<P: Preset> BackSync<P> {
         if let Some(data) = data.as_ref() {
             info_with_peers!(
                 "starting back-sync from {} to {} slot",
-                data.current.slot, data.low.slot
+                data.current.slot,
+                data.low.slot
             );
         }
 
@@ -154,8 +155,12 @@ impl<P: Preset> BackSync<P> {
                     &anchor_checkpoint_provider,
                     &is_exiting,
                 ) {
-                    Ok(()) => info_with_peers!("back-sync state archiver thread finished successfully"),
-                    Err(error) => warn_with_peers!("unable to archive back back-sync states: {error:?}"),
+                    Ok(()) => {
+                        info_with_peers!("back-sync state archiver thread finished successfully")
+                    }
+                    Err(error) => {
+                        warn_with_peers!("unable to archive back back-sync states: {error:?}")
+                    }
                 }
 
                 ArchiverToSync::BackSyncStatesArchived.send(&sync_tx);

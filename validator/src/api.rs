@@ -824,7 +824,9 @@ impl ApiToken {
                 match Self::load(token_file_path.as_path()) {
                     Ok(auth) => Ok(auth),
                     Err(error) => {
-                        debug_with_peers!("unable to read Validator API token from default path: {error:?}");
+                        debug_with_peers!(
+                            "unable to read Validator API token from default path: {error:?}"
+                        );
 
                         let token = Self::new();
                         token.store(token_file_path.as_path())?;

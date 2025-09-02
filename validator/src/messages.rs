@@ -34,7 +34,9 @@ pub enum InternalMessage {
 impl InternalMessage {
     pub fn send(self, tx: &UnboundedSender<Self>) {
         if tx.unbounded_send(self).is_err() {
-            warn_with_peers!("send internal validator message failed because the receiver was dropped");
+            warn_with_peers!(
+                "send internal validator message failed because the receiver was dropped"
+            );
         }
     }
 }

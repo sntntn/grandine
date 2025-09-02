@@ -80,7 +80,9 @@ impl Web3Signer {
                         keys.insert(url, Some(remote_keys));
                     }
                 }
-                Err(error) => warn_with_peers!("failed to load Web3Signer keys from {url}: {error:?}"),
+                Err(error) => {
+                    warn_with_peers!("failed to load Web3Signer keys from {url}: {error:?}")
+                }
             }
         }
 

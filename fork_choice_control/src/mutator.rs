@@ -869,9 +869,13 @@ where
                     error.downcast_ref::<Error<P>>(),
                     Some(Error::AggregatorNotInCommittee { .. }),
                 ) {
-                    debug_with_peers!("aggregate and proof rejected (error: {error}, origin: {origin:?})");
+                    debug_with_peers!(
+                        "aggregate and proof rejected (error: {error}, origin: {origin:?})"
+                    );
                 } else {
-                    warn_with_peers!("aggregate and proof rejected (error: {error}, origin: {origin:?})");
+                    warn_with_peers!(
+                        "aggregate and proof rejected (error: {error}, origin: {origin:?})"
+                    );
                 }
 
                 let (gossip_id, sender) = origin.split();
@@ -1154,7 +1158,9 @@ where
                     self.spawn_preprocess_head_state_for_next_slot_task();
                 }
             }
-            Err(error) => debug_with_peers!("attester slashing rejected (error: {error}, origin: {origin:?})"),
+            Err(error) => {
+                debug_with_peers!("attester slashing rejected (error: {error}, origin: {origin:?})")
+            }
         }
 
         Ok(())
@@ -1579,7 +1585,9 @@ where
             return Ok(());
         }
 
-        debug_with_peers!("block accepted (block_root: {block_root:?}, block: {block:?}, origin: {origin:?})");
+        debug_with_peers!(
+            "block accepted (block_root: {block_root:?}, block: {block:?}, origin: {origin:?})"
+        );
 
         let block_slot = chain_link.slot();
 
@@ -1589,7 +1597,8 @@ where
                     "the store accepted a new block at slot {block_slot}, \
                     although it already contains one at the same slot on the canonical chain \
                     (existing canonical block: {:?}, new block: {:?})",
-                    existing_link.block, chain_link.block,
+                    existing_link.block,
+                    chain_link.block,
                 );
             }
         }
@@ -1747,7 +1756,9 @@ where
 
                 result
                     .map_err(|error| {
-                        debug_with_peers!("attester slashing rejected (error: {error}, origin: {origin:?})")
+                        debug_with_peers!(
+                            "attester slashing rejected (error: {error}, origin: {origin:?})"
+                        )
                     })
                     .unwrap_or_default()
             })
@@ -1838,7 +1849,9 @@ where
     }
 
     fn reject_block(&mut self, error: AnyhowError, block_root: H256, origin: BlockOrigin) {
-        warn_with_peers!("block rejected (error: {error}, block root: {block_root:?}, origin: {origin:?})");
+        warn_with_peers!(
+            "block rejected (error: {error}, block root: {block_root:?}, origin: {origin:?})"
+        );
 
         let sender = match origin {
             BlockOrigin::Gossip(gossip_id) => {
@@ -1950,7 +1963,8 @@ where
 
         info_with_peers!(
             "chain reorganized (old head: {:?}, new head: {:?}), cause: {reorg_source:?}",
-            old_head.block_root, new_head.block_root,
+            old_head.block_root,
+            new_head.block_root,
         );
 
         let state = new_head.state(&self.store);
@@ -2158,7 +2172,9 @@ where
         if slot <= self.store.slot() {
             self.retry_aggregate_and_proof(wait_group.clone(), pending_aggregate_and_proof);
         } else {
-            debug_with_peers!("aggregate and proof delayed until slot: {pending_aggregate_and_proof:?}");
+            debug_with_peers!(
+                "aggregate and proof delayed until slot: {pending_aggregate_and_proof:?}"
+            );
 
             self.delayed_until_slot
                 .entry(slot)
@@ -2609,7 +2625,9 @@ where
         let current_tick = self.store.tick();
 
         if current_tick.slot == (block_slot + 1) && current_tick.is_before_attesting_interval() {
-            debug_with_peers!("spawn preprocess state task for current slot: {block_slot}: {current_tick:?}");
+            debug_with_peers!(
+                "spawn preprocess state task for current slot: {block_slot}: {current_tick:?}"
+            );
 
             self.spawn(PreprocessStateTask {
                 store_snapshot: self.owned_store(),
@@ -2700,7 +2718,9 @@ where
                                     "unfinalized block pruning complete: pruned slots: {slots:?}"
                                 );
                             }
-                            Err(error) => error_with_peers!("unfinalized block pruning failed: {error:?}"),
+                            Err(error) => {
+                                error_with_peers!("unfinalized block pruning failed: {error:?}")
+                            }
                         }
                     }
 
@@ -3024,7 +3044,9 @@ fn reply_to_http_api(
 ) {
     if let Some(sender) = sender {
         if let Err(reply) = sender.send(reply) {
-            debug_with_peers!("reply to HTTP API failed because the receiver was dropped: {reply:?}");
+            debug_with_peers!(
+                "reply to HTTP API failed because the receiver was dropped: {reply:?}"
+            );
         }
     }
 }
@@ -3035,7 +3057,9 @@ fn reply_block_validation_result_to_http_api(
 ) {
     if let Some(mut sender) = sender {
         if let Err(reply) = sender.try_send(reply) {
-            debug_with_peers!("reply to HTTP API failed because the receiver was dropped: {reply:?}");
+            debug_with_peers!(
+                "reply to HTTP API failed because the receiver was dropped: {reply:?}"
+            );
         }
     }
 }

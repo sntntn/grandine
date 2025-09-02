@@ -31,8 +31,7 @@ use helper_functions::{accessors, misc};
 use http_api_utils::{BlockId, EventChannels, StateId, Topic};
 use itertools::{izip, Either, Itertools as _};
 use liveness_tracker::ApiToLiveness;
-use tracing::instrument;
-use logging::{info_with_peers ,debug_with_peers, warn_with_peers};
+use logging::{debug_with_peers, info_with_peers, warn_with_peers};
 use operation_pools::{
     convert_to_electra_attestation, AttestationAggPool, BlsToExecutionChangePool, Origin,
     PoolAdditionOutcome, SyncCommitteeAggPool,
@@ -49,6 +48,7 @@ use ssz::{ContiguousList, DynamicList, Hc, Ssz, SszHash as _};
 use std_ext::ArcExt as _;
 use tap::Pipe as _;
 use tokio_stream::wrappers::{errors::BroadcastStreamRecvError, BroadcastStream};
+use tracing::instrument;
 use try_from_iterator::TryFromIterator as _;
 use typenum::Unsigned as _;
 use types::{
@@ -2294,7 +2294,9 @@ pub async fn validator_blinded_block<P: Preset, W: Wait>(
     let Ok(proposer_index) = accessors::get_beacon_proposer_index(&chain_config, &beacon_state)
     else {
         // accessors::get_beacon_proposer_index can only fail if head state has no active validators.
-        warn_with_peers!("failed to produce blinded beacon block: head state has no active validators");
+        warn_with_peers!(
+            "failed to produce blinded beacon block: head state has no active validators"
+        );
         return Err(Error::UnableToProduceBlindedBlock);
     };
 
@@ -2410,7 +2412,9 @@ pub async fn validator_block_v3<P: Preset, W: Wait>(
     let Ok(proposer_index) = accessors::get_beacon_proposer_index(&chain_config, &beacon_state)
     else {
         // accessors::get_beacon_proposer_index can only fail if head state has no active validators.
-        warn_with_peers!("failed to produce blinded beacon block: head state has no active validators");
+        warn_with_peers!(
+            "failed to produce blinded beacon block: head state has no active validators"
+        );
         return Err(Error::UnableToProduceBeaconBlock);
     };
 
@@ -2930,15 +2934,21 @@ async fn publish_signed_block<P: Preset, W: Wait>(
             // Vouch submits blocks it constructs to all beacon nodes it is connected to.
             // The blocks often reach our application through gossip faster than through the API.
             let block_root = block.message().hash_tree_root();
-            info_with_peers!("block received through HTTP API was ignored (block root: {block_root:?})");
+            info_with_peers!(
+                "block received through HTTP API was ignored (block root: {block_root:?})"
+            );
             StatusCode::ACCEPTED
         }
         Ok(None) => {
-            warn_with_peers!("received no block validation response for HTTP API (block: {block:?})");
+            warn_with_peers!(
+                "received no block validation response for HTTP API (block: {block:?})"
+            );
             StatusCode::ACCEPTED
         }
         Err(error) => {
-            warn_with_peers!("received invalid block through HTTP API (block: {block:?}, error: {error})");
+            warn_with_peers!(
+                "received invalid block through HTTP API (block: {block:?}, error: {error})"
+            );
             StatusCode::ACCEPTED
         }
     };
@@ -3061,7 +3071,9 @@ async fn publish_signed_block_v2<P: Preset, W: Wait>(
             }
         }
         Ok(None) => {
-            warn_with_peers!("received no block validation response for HTTP API (block: {block:?})");
+            warn_with_peers!(
+                "received no block validation response for HTTP API (block: {block:?})"
+            );
 
             if broadcast_validation == BroadcastValidation::Gossip {
                 StatusCode::ACCEPTED
@@ -3070,7 +3082,9 @@ async fn publish_signed_block_v2<P: Preset, W: Wait>(
             }
         }
         Err(error) => {
-            warn_with_peers!("received invalid block through HTTP API (block: {block:?}, error: {error})");
+            warn_with_peers!(
+                "received invalid block through HTTP API (block: {block:?}, error: {error})"
+            );
 
             if broadcast_validation == BroadcastValidation::Gossip {
                 StatusCode::ACCEPTED
@@ -3179,7 +3193,6 @@ fn build_attestation_item<P: Preset, W: Wait>(
     ))
 }
 
-
 #[instrument(parent = None, skip_all)]
 async fn submit_attestations_to_pool<P: Preset, W: Wait>(
     controller: ApiController<P, W>,
@@ -3214,7 +3227,9 @@ async fn submit_attestations_to_pool<P: Preset, W: Wait>(
         .flat_map(|(target_state_result, attestations)| {
             let target_state = target_state_result
                 .map_err(|error| {
-                    warn_with_peers!("attestations submitted to beacon node were rejected: {error}");
+                    warn_with_peers!(
+                        "attestations submitted to beacon node were rejected: {error}"
+                    );
                     error
                 })
                 .ok();

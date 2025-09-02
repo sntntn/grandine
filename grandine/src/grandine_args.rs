@@ -1272,7 +1272,9 @@ impl GrandineArgs {
         });
 
         let web3signer_urls = if web3signer_urls.is_empty() && !web3signer_api_urls.is_empty() {
-            warn_with_peers!("--web3signer-api-urls option is deprecated. Use --web3signer-urls instead.");
+            warn_with_peers!(
+                "--web3signer-api-urls option is deprecated. Use --web3signer-urls instead."
+            );
             web3signer_api_urls
         } else {
             web3signer_urls

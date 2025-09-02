@@ -31,7 +31,10 @@ use futures::{
     stream::StreamExt as _,
 };
 use helper_functions::{accessors, misc};
-use logging::{debug_with_peers, error_with_peers, info_with_peers, trace_with_peers, warn_with_peers,PEER_LOG_METRICS};
+use logging::{
+    debug_with_peers, error_with_peers, info_with_peers, trace_with_peers, warn_with_peers,
+    PEER_LOG_METRICS,
+};
 use operation_pools::{BlsToExecutionChangePool, Origin, PoolToP2pMessage, SyncCommitteeAggPool};
 use prometheus_client::registry::Registry;
 use prometheus_metrics::Metrics;
@@ -163,12 +166,8 @@ impl<P: Preset> Network<P> {
         };
 
         // Box the future to pass `clippy::large_futures`.
-        let (service, network_globals) = Box::pin(Service::new(
-            chain_config.clone_arc(),
-            executor,
-            context,
-        ))
-        .await?;
+        let (service, network_globals) =
+            Box::pin(Service::new(chain_config.clone_arc(), executor, context)).await?;
 
         let mut port_mappings = None;
 
@@ -687,7 +686,9 @@ impl<P: Preset> Network<P> {
             return;
         }
 
-        trace_with_peers!("publishing sync committee contribution and proof: {contribution_and_proof:?}");
+        trace_with_peers!(
+            "publishing sync committee contribution and proof: {contribution_and_proof:?}"
+        );
 
         self.publish(PubsubMessage::SignedContributionAndProof(
             contribution_and_proof,
@@ -698,7 +699,9 @@ impl<P: Preset> Network<P> {
         &self,
         signed_bls_to_execution_change: Box<SignedBlsToExecutionChange>,
     ) {
-        trace_with_peers!("publishing signed bls to execution change: {signed_bls_to_execution_change:?}");
+        trace_with_peers!(
+            "publishing signed bls to execution change: {signed_bls_to_execution_change:?}"
+        );
 
         self.publish(PubsubMessage::BlsToExecutionChange(
             signed_bls_to_execution_change,
@@ -864,7 +867,9 @@ impl<P: Preset> Network<P> {
                 peer_id,
                 error,
             } => {
-                debug_with_peers!("app_request_id: {app_request_id:?} to peer {peer_id} failed: {error}");
+                debug_with_peers!(
+                    "app_request_id: {app_request_id:?} to peer {peer_id} failed: {error}"
+                );
                 P2pToSync::RequestFailed(peer_id).send(&self.channels.p2p_to_sync_tx);
             }
             NetworkEvent::RequestReceived {
@@ -930,17 +935,23 @@ impl<P: Preset> Network<P> {
             }
             RequestType::LightClientFinalityUpdate => {
                 // TODO(Altair Light Client Sync Protocol)
-                debug_with_peers!("received LightClientFinalityUpdate request (peer_id: {peer_id})");
+                debug_with_peers!(
+                    "received LightClientFinalityUpdate request (peer_id: {peer_id})"
+                );
                 Ok(())
             }
             RequestType::LightClientOptimisticUpdate => {
                 // TODO(Altair Light Client Sync Protocol)
-                debug_with_peers!("received LightClientOptimisticUpdate request (peer_id: {peer_id})");
+                debug_with_peers!(
+                    "received LightClientOptimisticUpdate request (peer_id: {peer_id})"
+                );
                 Ok(())
             }
             RequestType::LightClientUpdatesByRange(_) => {
                 // TODO(Altair Light Client Sync Protocol)
-                debug_with_peers!("received LightClientUpdatesByRange request (peer_id: {peer_id})");
+                debug_with_peers!(
+                    "received LightClientUpdatesByRange request (peer_id: {peer_id})"
+                );
                 Ok(())
             }
             RequestType::BlobsByRange(request) => {
@@ -951,7 +962,9 @@ impl<P: Preset> Network<P> {
                 Ok(())
             }
             RequestType::Goodbye(goodbye_reason) => {
-                debug_with_peers!("received GoodBye request (peer_id: {peer_id}, reason: {goodbye_reason:?})");
+                debug_with_peers!(
+                    "received GoodBye request (peer_id: {peer_id}, reason: {goodbye_reason:?})"
+                );
                 Ok(())
             }
             RequestType::Ping(ping) => {
@@ -959,7 +972,9 @@ impl<P: Preset> Network<P> {
                 Ok(())
             }
             RequestType::MetaData(request) => {
-                debug_with_peers!("received MetaData request (peer_id: {peer_id}, request: {request:?})");
+                debug_with_peers!(
+                    "received MetaData request (peer_id: {peer_id}, request: {request:?})"
+                );
                 Ok(())
             }
         }
@@ -991,7 +1006,9 @@ impl<P: Preset> Network<P> {
         inbound_request_id: InboundRequestId,
         request: OldBlocksByRangeRequest,
     ) -> Result<()> {
-        debug_with_peers!("received BeaconBlocksByRange request (peer_id: {peer_id}, request: {request:?})");
+        debug_with_peers!(
+            "received BeaconBlocksByRange request (peer_id: {peer_id}, request: {request:?})"
+        );
 
         let start_slot = request.start_slot();
         let max_request_blocks = request.max_request_blocks(self.controller.chain_config());
@@ -1055,7 +1072,9 @@ impl<P: Preset> Network<P> {
         inbound_request_id: InboundRequestId,
         request: BlobsByRangeRequest,
     ) -> Result<()> {
-        debug_with_peers!("received BlobSidecarsByRange request (peer_id: {peer_id}, request: {request:?})");
+        debug_with_peers!(
+            "received BlobSidecarsByRange request (peer_id: {peer_id}, request: {request:?})"
+        );
 
         let BlobsByRangeRequest { start_slot, count } = request;
 
@@ -1115,7 +1134,9 @@ impl<P: Preset> Network<P> {
         inbound_request_id: InboundRequestId,
         request: BlobsByRootRequest,
     ) {
-        debug_with_peers!("received BlobsByRootRequest request (peer_id: {peer_id}, request: {request:?})");
+        debug_with_peers!(
+            "received BlobsByRootRequest request (peer_id: {peer_id}, request: {request:?})"
+        );
 
         // TODO(feature/deneb): MIN_EPOCHS_FOR_BLOB_SIDECARS_REQUESTS
         let BlobsByRootRequest { blob_ids } = request;
@@ -1228,7 +1249,9 @@ impl<P: Preset> Network<P> {
     ) {
         match response {
             Response::Status(remote) => {
-                debug_with_peers!("received Status response (peer_id: {peer_id}, remote: {remote:?})");
+                debug_with_peers!(
+                    "received Status response (peer_id: {peer_id}, remote: {remote:?})"
+                );
 
                 self.check_status(&self.local_status(), remote, peer_id);
             }
@@ -1340,19 +1363,27 @@ impl<P: Preset> Network<P> {
             Response::DataColumnsByRange(_) | Response::DataColumnsByRoot(_) => {}
             Response::LightClientBootstrap(_) => {
                 // TODO(Altair Light Client Sync Protocol)
-                debug_with_peers!("received LightClientBootstrap response chunk (peer_id: {peer_id})");
+                debug_with_peers!(
+                    "received LightClientBootstrap response chunk (peer_id: {peer_id})"
+                );
             }
             Response::LightClientFinalityUpdate(_) => {
                 // TODO(Altair Light Client Sync Protocol)
-                debug_with_peers!("received LightClientFinalityUpdate response (peer_id: {peer_id})");
+                debug_with_peers!(
+                    "received LightClientFinalityUpdate response (peer_id: {peer_id})"
+                );
             }
             Response::LightClientOptimisticUpdate(_) => {
                 // TODO(Altair Light Client Sync Protocol)
-                debug_with_peers!("received LightClientOptimisticUpdate response (peer_id: {peer_id})");
+                debug_with_peers!(
+                    "received LightClientOptimisticUpdate response (peer_id: {peer_id})"
+                );
             }
             Response::LightClientUpdatesByRange(_) => {
                 // TODO(Altair Light Client Sync Protocol)
-                debug_with_peers!("received LightClientUpdatesByRange response (peer_id: {peer_id})");
+                debug_with_peers!(
+                    "received LightClientUpdatesByRange response (peer_id: {peer_id})"
+                );
             }
         }
     }
@@ -1482,7 +1513,9 @@ impl<P: Preset> Network<P> {
                     metrics.register_gossip_object(&["proposer_slashing"]);
                 }
 
-                debug_with_peers!("received proposer slashing as gossip: {proposer_slashing:?} from {source}");
+                debug_with_peers!(
+                    "received proposer slashing as gossip: {proposer_slashing:?} from {source}"
+                );
 
                 let gossip_id = GossipId { source, message_id };
 
@@ -1494,7 +1527,9 @@ impl<P: Preset> Network<P> {
                     metrics.register_gossip_object(&["attester_slashing"]);
                 }
 
-                debug_with_peers!("received attester slashing as gossip: {attester_slashing:?} from {source}");
+                debug_with_peers!(
+                    "received attester slashing as gossip: {attester_slashing:?} from {source}"
+                );
 
                 let gossip_id = GossipId { source, message_id };
 
@@ -1511,7 +1546,9 @@ impl<P: Preset> Network<P> {
 
                 let gossip_id = GossipId { source, message_id };
 
-                trace_with_peers!("received signed contribution and proof as gossip: {proof:?} from {source}");
+                trace_with_peers!(
+                    "received signed contribution and proof as gossip: {proof:?} from {source}"
+                );
 
                 // Handle it asynchronously to not block the event loop.
                 self.sync_committee_agg_pool
@@ -1662,7 +1699,8 @@ impl<P: Preset> Network<P> {
             if root != remote.finalized_root {
                 debug_with_peers!(
                     "peer {peer_id} has different block finalized at epoch {} ({root:?} != {:?})",
-                    remote.finalized_epoch, remote.finalized_root,
+                    remote.finalized_epoch,
+                    remote.finalized_root,
                 );
 
                 P2pToSync::RemovePeer(peer_id).send(&self.channels.p2p_to_sync_tx);
@@ -1682,7 +1720,8 @@ impl<P: Preset> Network<P> {
             debug_with_peers!(
                 "disconnecting peer {peer_id} due to missing historical data \
                  required to validate finalized root {:?} at epoch {}",
-                remote.finalized_root, remote.finalized_epoch,
+                remote.finalized_root,
+                remote.finalized_epoch,
             );
 
             P2pToSync::RemovePeer(peer_id).send(&self.channels.p2p_to_sync_tx);

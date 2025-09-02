@@ -653,7 +653,9 @@ impl<P: Preset, W: Wait + Sync> Validator<P, W> {
                     .publish_sync_committee_messages(&wait_group, slot_head)
                     .await
                 {
-                    error_with_peers!("failed to produce and publish own sync_committee messages: {error:?}");
+                    error_with_peers!(
+                        "failed to produce and publish own sync_committee messages: {error:?}"
+                    );
                 }
             }
             TickKind::Aggregate => {
@@ -897,7 +899,9 @@ impl<P: Preset, W: Wait + Sync> Validator<P, W> {
                 {
                     Ok(response) => response,
                     Err(error) => {
-                        warn_with_peers!("failed to post blinded block to the builder node: {error:?}");
+                        warn_with_peers!(
+                            "failed to post blinded block to the builder node: {error:?}"
+                        );
                         return Ok(());
                     }
                 };
@@ -905,7 +909,9 @@ impl<P: Preset, W: Wait + Sync> Validator<P, W> {
                 block_proofs = proofs;
                 block_blobs = blobs;
 
-                debug_with_peers!("received execution payload from the builder node: {execution_payload:?}");
+                debug_with_peers!(
+                    "received execution payload from the builder node: {execution_payload:?}"
+                );
 
                 let (message, signature) = signed_blinded_block.split();
 
@@ -1302,7 +1308,9 @@ impl<P: Preset, W: Wait + Sync> Validator<P, W> {
             for sync_committee_message in &messages {
                 debug_with_peers!(
                     "validator {} publishing sync committee message (subnet_id: {}): {:?}",
-                    sync_committee_message.validator_index, sync_subnet_id, sync_committee_message,
+                    sync_committee_message.validator_index,
+                    sync_subnet_id,
+                    sync_committee_message,
                 );
 
                 ValidatorToP2p::PublishSyncCommitteeMessage(Box::new((
@@ -1367,7 +1375,8 @@ impl<P: Preset, W: Wait + Sync> Validator<P, W> {
         for contribution_and_proof in contributions {
             debug_with_peers!(
                 "validator {} publishing sync committee contribution and proof: {:?}",
-                contribution_and_proof.message.aggregator_index, contribution_and_proof,
+                contribution_and_proof.message.aggregator_index,
+                contribution_and_proof,
             );
 
             ValidatorToP2p::PublishContributionAndProof(Box::new(contribution_and_proof))
@@ -1419,7 +1428,9 @@ impl<P: Preset, W: Wait + Sync> Validator<P, W> {
                 .publish_sync_committee_messages(wait_group, slot_head)
                 .await
             {
-                error_with_peers!("failed to produce and publish own sync_committee messages: {error:?}");
+                error_with_peers!(
+                    "failed to produce and publish own sync_committee messages: {error:?}"
+                );
             }
         }
     }

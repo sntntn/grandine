@@ -278,7 +278,9 @@ impl PlatformSpecificSystemMetrics {
             .ok();
         let cpu = cpu_times.as_ref();
         let mem = psutil::memory::virtual_memory()
-            .map_err(|error| warn_with_peers!("unable to get virtual memory information: {error:?}"))
+            .map_err(|error| {
+                warn_with_peers!("unable to get virtual memory information: {error:?}")
+            })
             .ok();
 
         let mem = mem.as_ref();

@@ -13,7 +13,7 @@ use eth1_api::ApiController;
 use fork_choice_control::Wait;
 use helper_functions::misc;
 use log::{log, Level};
-use logging::{debug_with_peers, info_with_peers, warn_with_peers, trace_with_peers};
+use logging::{debug_with_peers, info_with_peers, trace_with_peers, warn_with_peers};
 use num_traits::identities::Zero as _;
 use prometheus_metrics::Metrics;
 use thiserror::Error;

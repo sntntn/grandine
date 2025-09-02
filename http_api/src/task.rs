@@ -16,13 +16,13 @@ use futures::{
 use genesis::AnchorCheckpointProvider;
 use http_api_utils::{ApiMetrics, EventChannels};
 use liveness_tracker::ApiToLiveness;
-use tracing::instrument;
 use logging::info_with_peers;
 use operation_pools::{AttestationAggPool, BlsToExecutionChangePool, SyncCommitteeAggPool};
 use p2p::{ApiToP2p, NetworkConfig, SyncToApi, ToSubnetService};
 use prometheus_metrics::Metrics;
 use std_ext::ArcExt as _;
 use tokio::net::TcpListener;
+use tracing::instrument;
 use types::preset::Preset;
 use validator::{ApiToValidator, ValidatorConfig};
 
@@ -60,7 +60,6 @@ pub struct HttpApi<P: Preset, W: Wait> {
 }
 
 impl<P: Preset, W: Wait> HttpApi<P, W> {
-
     #[instrument( parent = None, skip(self), fields(address = %self.http_api_config.address))]
     pub async fn run(self) -> Result<()> {
         let listener = self.http_api_config.listener().await?;

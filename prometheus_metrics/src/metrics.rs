@@ -1004,7 +1004,9 @@ impl Metrics {
             .get_metric_with_label_values(labels)
         {
             Ok(metrics) => metrics.observe(response_duration.as_secs_f64()),
-            Err(error) => warn_with_peers!("unable to track HTTP API response time for {labels:?}: {error:?}"),
+            Err(error) => {
+                warn_with_peers!("unable to track HTTP API response time for {labels:?}: {error:?}")
+            }
         }
     }
 
@@ -1016,7 +1018,9 @@ impl Metrics {
         {
             Ok(metrics) => metrics.observe(response_duration.as_secs_f64()),
             Err(error) => {
-                warn_with_peers!("unable to track metrics server response time for {labels:?}: {error:?}")
+                warn_with_peers!(
+                    "unable to track metrics server response time for {labels:?}: {error:?}"
+                )
             }
         }
     }
@@ -1029,7 +1033,9 @@ impl Metrics {
         {
             Ok(metrics) => metrics.observe(response_duration.as_secs_f64()),
             Err(error) => {
-                warn_with_peers!("unable to track Validator API response time for {labels:?}: {error:?}")
+                warn_with_peers!(
+                    "unable to track Validator API response time for {labels:?}: {error:?}"
+                )
             }
         }
     }
@@ -1049,7 +1055,9 @@ impl Metrics {
         match self.gossip_objects.get_metric_with_label_values(labels) {
             Ok(counter) => counter.inc(),
             Err(error) => {
-                warn_with_peers!("unable to register received object over gossip for {labels:?}: {error:?}")
+                warn_with_peers!(
+                    "unable to register received object over gossip for {labels:?}: {error:?}"
+                )
             }
         }
     }
@@ -1084,7 +1092,9 @@ impl Metrics {
         {
             Ok(counter) => counter.inc(),
             Err(error) => {
-                warn_with_peers!("unable to register mutator aggregate_and_proof for {labels:?}: {error:?}")
+                warn_with_peers!(
+                    "unable to register mutator aggregate_and_proof for {labels:?}: {error:?}"
+                )
             }
         }
     }

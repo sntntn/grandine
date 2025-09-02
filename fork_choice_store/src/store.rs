@@ -24,7 +24,7 @@ use helper_functions::{
 };
 use im::{hashmap, hashmap::HashMap, ordmap, vector, HashSet, OrdMap, Vector};
 use itertools::{izip, Either, EitherOrBoth, Itertools as _};
-use logging::{info_with_peers, error_with_peers, warn_with_peers};
+use logging::{error_with_peers, info_with_peers, warn_with_peers};
 use prometheus_metrics::Metrics;
 use pubkey_cache::PubkeyCache;
 use ssz::SszHash as _;

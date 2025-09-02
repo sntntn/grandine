@@ -38,7 +38,9 @@ pub enum RestartMessage {
 impl RestartMessage {
     pub fn send(self, tx: &UnboundedSender<Self>) {
         if let Err(message) = tx.unbounded_send(self) {
-            debug_with_peers!("send to restart service failed because the receiver was dropped: {message:?}");
+            debug_with_peers!(
+                "send to restart service failed because the receiver was dropped: {message:?}"
+            );
         }
     }
 }

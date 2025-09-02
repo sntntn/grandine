@@ -23,7 +23,7 @@ use helper_functions::{
     verifier::{MultiVerifier, Triple, Verifier},
 };
 use itertools::Either;
-use logging::{debug_with_peers,warn_with_peers};
+use logging::{debug_with_peers, warn_with_peers};
 use prometheus_metrics::Metrics;
 use pubkey_cache::PubkeyCache;
 use rayon::iter::{IntoParallelIterator as _, ParallelBridge as _, ParallelIterator as _};
@@ -522,7 +522,9 @@ impl<P: Preset, W: Wait> VerifyAttestationBatchTask<P, W> {
                 self.send_results_to_fork_choice(accepted);
             }
             Err(error) => {
-                warn_with_peers!("signature verification for gossip attestation batch failed: {error}");
+                warn_with_peers!(
+                    "signature verification for gossip attestation batch failed: {error}"
+                );
 
                 for accepted_attestation in accepted.into_iter().flatten() {
                     if let AttestationAction::Accept { attestation, .. } = accepted_attestation {

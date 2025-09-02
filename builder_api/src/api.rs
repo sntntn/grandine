@@ -193,7 +193,9 @@ impl Api {
         >,
         use_json: bool,
     ) -> Result<()> {
-        debug_with_peers!("registering validators: {validator_registrations:?}, use_json: {use_json}");
+        debug_with_peers!(
+            "registering validators: {validator_registrations:?}, use_json: {use_json}"
+        );
 
         let url = self.url("/eth/v1/builder/validators")?;
         let request = self.client.post(url.into_url());
@@ -377,7 +379,9 @@ impl Api {
             },
         );
 
-        info_with_peers!("received execution payload from builder for block {block_root:?} at slot {slot}");
+        info_with_peers!(
+            "received execution payload from builder for block {block_root:?} at slot {slot}"
+        );
 
         Ok(response)
     }

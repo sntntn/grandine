@@ -260,7 +260,9 @@ impl SlashingProtector {
                             report.blocks.succeeded.push(proposal);
                         }
                         Err(error) => {
-                            debug_with_peers!("failed to import block (block: {proposal:?}, error: {error})");
+                            debug_with_peers!(
+                                "failed to import block (block: {proposal:?}, error: {error})"
+                            );
                             report.blocks.failed.push(proposal);
                         }
                     }
@@ -415,7 +417,9 @@ impl SlashingProtector {
             return Ok(validator_id);
         }
 
-        debug_with_peers!("saving validator information to slashing protection db (pubkey: {pubkey:?})");
+        debug_with_peers!(
+            "saving validator information to slashing protection db (pubkey: {pubkey:?})"
+        );
 
         transaction.execute(
             "INSERT INTO validators (pubkey) VALUES (?1)",
@@ -627,7 +631,9 @@ impl SlashingProtector {
                 Ok(outcome) => match outcome {
                     SlashingValidationOutcome::Accept => Some(attestation),
                     SlashingValidationOutcome::Ignore => {
-                        warn_with_peers!("slashing protector ignored duplicate attestation: {attestation:?}");
+                        warn_with_peers!(
+                            "slashing protector ignored duplicate attestation: {attestation:?}"
+                        );
 
                         None
                     }
@@ -764,8 +770,12 @@ impl SlashingProtector {
         };
 
         match run() {
-            Ok(()) => info_with_peers!("slashing protection db pruning completed for epoch: {current_epoch}"),
-            Err(error) => warn_with_peers!("error occurred while pruning slashing protection db: {error:?}"),
+            Ok(()) => info_with_peers!(
+                "slashing protection db pruning completed for epoch: {current_epoch}"
+            ),
+            Err(error) => {
+                warn_with_peers!("error occurred while pruning slashing protection db: {error:?}")
+            }
         }
 
         Ok(())

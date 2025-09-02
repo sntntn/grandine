@@ -58,7 +58,9 @@ pub enum AttestationVerifierMessage<P: Preset, W> {
 impl<P: Preset, W> AttestationVerifierMessage<P, W> {
     pub fn send(self, tx: &impl UnboundedSink<Self>) {
         if tx.unbounded_send(self).is_err() {
-            debug_with_peers!("send to attestation verifier failed because the receiver was dropped");
+            debug_with_peers!(
+                "send to attestation verifier failed because the receiver was dropped"
+            );
         }
     }
 }

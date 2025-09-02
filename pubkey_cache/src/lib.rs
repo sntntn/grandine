@@ -21,7 +21,9 @@ pub struct PubkeyCache {
 impl PubkeyCache {
     pub fn load(database: Database) -> Self {
         let keys = Self::load_all_keys_from_db(&database)
-            .inspect_err(|error| warn_with_peers!("failed to load cached public keys from database: {error}"))
+            .inspect_err(|error| {
+                warn_with_peers!("failed to load cached public keys from database: {error}")
+            })
             .unwrap_or_default();
 
         Self {

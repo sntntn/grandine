@@ -286,7 +286,9 @@ fn process_slots<P: Preset, S: Storage<P>>(
         let processing_count = currently_processing.load(Ordering::SeqCst);
 
         if processing_count > 1 {
-            warn_with_peers!("currently processing slots for {processing_count} states in state cache");
+            warn_with_peers!(
+                "currently processing slots for {processing_count} states in state cache"
+            );
         }
     }
 

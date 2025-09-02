@@ -40,7 +40,9 @@ impl PortMappings {
             "grandine-upnp-udp",
         )?;
 
-        info_with_peers!("created UPnP mapping for discovery service {local_udp_addr}/{upnp_udp_socket_addr}");
+        info_with_peers!(
+            "created UPnP mapping for discovery service {local_udp_addr}/{upnp_udp_socket_addr}"
+        );
 
         Ok(Self {
             udp_mapping: udp_port,
@@ -58,7 +60,9 @@ fn remove_upnp_mapping(gateway: &Gateway, protocol: PortMappingProtocol, externa
     match gateway.remove_port(protocol, external_port) {
         Ok(()) => info_with_peers!("Removed UPnP mapping for {protocol} port {external_port}"),
         Err(error) => {
-            warn_with_peers!("Unable to remove UPnP mapping for {protocol} port {external_port}: {error}");
+            warn_with_peers!(
+                "Unable to remove UPnP mapping for {protocol} port {external_port}: {error}"
+            );
         }
     }
 }

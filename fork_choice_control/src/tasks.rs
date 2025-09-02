@@ -175,7 +175,9 @@ impl<P: Preset, W> Run for BlockVerifyForGossipTask<P, W> {
             });
 
         if let Err(reply) = sender.try_send(validation_outcome) {
-            debug_with_peers!("reply to HTTP API failed because the receiver was dropped: {reply:?}");
+            debug_with_peers!(
+                "reply to HTTP API failed because the receiver was dropped: {reply:?}"
+            );
         }
 
         drop(wait_group);
@@ -503,7 +505,9 @@ impl<P: Preset, W> Run for PreprocessStateTask<P, W> {
                 if let Err(error) =
                     initialize_preprocessed_state_cache(store_snapshot.chain_config(), &state)
                 {
-                    warn_with_peers!("failed to initialize preprocessed state's cache values: {error:?}");
+                    warn_with_peers!(
+                        "failed to initialize preprocessed state's cache values: {error:?}"
+                    );
                 }
 
                 MutatorMessage::PreprocessedBeaconState { state }.send(&mutator_tx);

@@ -31,7 +31,9 @@ pub enum PoolToLivenessMessage {
 impl PoolToLivenessMessage {
     pub fn send(self, tx: &UnboundedSender<Self>) {
         if let Err(message) = tx.unbounded_send(self) {
-            debug_with_peers!("send to liveness tracker failed because the receiver was dropped: {message:?}");
+            debug_with_peers!(
+                "send to liveness tracker failed because the receiver was dropped: {message:?}"
+            );
         }
     }
 }

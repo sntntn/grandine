@@ -81,7 +81,6 @@ macro_rules! error_with_peers {
     };
 }
 
-
 #[macro_export]
 macro_rules! crit {
     ( $( $rest:tt )* ) => {

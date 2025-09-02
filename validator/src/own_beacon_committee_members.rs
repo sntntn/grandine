@@ -94,7 +94,9 @@ impl OwnBeaconCommitteeMembers {
         *slot_members_opt = match self.compute_members_at_slot(state, slot).await {
             Ok(members) => members.map(|members| SlotBeaconCommitteeMembers { slot, members }),
             Err(error) => {
-                warn_with_peers!("failed to compute own beacon committee members at slot {slot}: {error:?}");
+                warn_with_peers!(
+                    "failed to compute own beacon committee members at slot {slot}: {error:?}"
+                );
                 None
             }
         };

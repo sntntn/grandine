@@ -857,7 +857,9 @@ impl<P: Preset, W: Wait> BlockBuildContext<P, W> {
                         match operation_pools::convert_to_electra_attestation(attestation) {
                             Ok(electra_attestation) => Some((electra_attestation, committee_index)),
                             Err(error) => {
-                                warn_with_peers!("unable to convert to electra attestation: {error:?}");
+                                warn_with_peers!(
+                                    "unable to convert to electra attestation: {error:?}"
+                                );
                                 None
                             }
                         }
@@ -1402,7 +1404,9 @@ impl<P: Preset, W: Wait> BlockBuildContext<P, W> {
             .signed_bls_to_execution_changes()
             .await
             .map_err(|error| {
-                warn_with_peers!("unable to retrieve BLS to execution changes from operation pool: {error:?}");
+                warn_with_peers!(
+                    "unable to retrieve BLS to execution changes from operation pool: {error:?}"
+                );
             })
             .unwrap_or_default()
             .into_iter()
@@ -1622,7 +1626,9 @@ impl<P: Preset, W: Wait> BlockBuildContext<P, W> {
                         .snapshot()
                         .nonempty_slots(self.head_block_root),
                 ) {
-                    warn_with_peers!("cannot use Builder API for execution payload header: {error}");
+                    warn_with_peers!(
+                        "cannot use Builder API for execution payload header: {error}"
+                    );
                     return None;
                 }
 
@@ -1706,7 +1712,9 @@ impl<P: Preset, W: Wait> BlockBuildContext<P, W> {
         {
             Ok(payload) => payload,
             Err(error) => {
-                warn_with_peers!("unable to retrieve payload with payload_id {payload_id:?}: {error:?}");
+                warn_with_peers!(
+                    "unable to retrieve payload with payload_id {payload_id:?}: {error:?}"
+                );
 
                 match payload_id {
                     PayloadIdEntry::Cached(_) => {
@@ -1725,7 +1733,9 @@ impl<P: Preset, W: Wait> BlockBuildContext<P, W> {
                         }
 
                         if let Some(payload_id) = payload_id {
-                            info_with_peers!("successfully retrieved non-cached payload_id: {payload_id:?}");
+                            info_with_peers!(
+                                "successfully retrieved non-cached payload_id: {payload_id:?}"
+                            );
 
                             self.producer_context
                                 .execution_engine
@@ -1796,7 +1806,9 @@ impl<P: Preset, W: Wait> BlockBuildContext<P, W> {
 
         self.local_execution_payload_result()
             .await
-            .map_err(|error| warn_with_peers!("execution engine failed to produce payload: {error:?}"))
+            .map_err(|error| {
+                warn_with_peers!("execution engine failed to produce payload: {error:?}")
+            })
             .ok()
             .flatten()
     }

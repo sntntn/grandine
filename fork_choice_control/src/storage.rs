@@ -203,7 +203,9 @@ impl<P: Preset> Storage<P> {
 
         // decompress and load all missing anchor state pubkeys into cache
         if let Err(error) = self.pubkey_cache.load_and_persist_state_keys(&anchor_state) {
-            warn_with_peers!("error occurred while loading anchor state keys into pubkey_cache: {error:?}");
+            warn_with_peers!(
+                "error occurred while loading anchor state keys into pubkey_cache: {error:?}"
+            );
         }
 
         let anchor_slot = anchor_block.message().slot();

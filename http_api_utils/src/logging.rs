@@ -73,7 +73,9 @@ pub fn log_response<E: ApiError + Send + Sync + 'static>(
                 ),
                 response.extensions().get::<Arc<E>>(),
             ) {
-                (shared, Some(error)) => info_with_peers!("{shared} (error: {})", error.format_sources()),
+                (shared, Some(error)) => {
+                    info_with_peers!("{shared} (error: {})", error.format_sources())
+                }
                 (shared, None) => info_with_peers!("{shared}"),
             }
         }
