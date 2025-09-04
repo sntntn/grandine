@@ -5,11 +5,9 @@
 )]
 
 use core::{
-    fmt::Display,
     sync::atomic::{AtomicBool, Ordering},
 };
 
-use logging::{info_with_peers, warn_with_peers};
 use parse_display::{Display, FromStr};
 use variant_count::VariantCount;
 
@@ -72,23 +70,47 @@ impl Feature {
         FEATURES[self as usize].store(true, Self::ORDERING)
     }
 
-    pub fn log(self, message: impl Display) {
-        // This seems like something that would be better done using structured logging.
-        // Maybe `log::kv` will be stable someday. Or we could implement it ourselves.
-        info_with_peers!("[{self}] {message}");
-    }
+    // Functions (`log` and `warn`) can be used, but can't be tested.
+    // They are not compatible with `#[traced_test]`, so their output cannot be captured in unit tests.
+    // The macros `log!` and `warn!` now fully replace these functions and are testable.
 
-    pub fn warn(self, message: impl Display) {
-        warn_with_peers!("[{self}] {message}");
-    }
+    // pub fn log(self, message: impl Display) {
+    //     logging::info_with_peers!(
+    //         feature = ?self,
+    //         %message        
+    //     );
+    // }
+
+    // pub fn warn(self, message: impl Display) {
+    //     logging::warn_with_peers!(
+    //         feature = ?self,
+    //         %message
+    //     );
+    // }
 }
 
 #[macro_export]
 macro_rules! log {
-    ($feature: ident, $($message: tt)+) => {{
+    ($feature:ident, $( $message:tt )+) => {{
         let feature = $crate::Feature::$feature;
         if feature.is_enabled() {
-            feature.log(format_args!($($message)+))
+            logging::info_with_peers!(
+                feature = ?feature,
+                $( $message )+
+            );
+        }
+    }};
+}
+
+#[macro_export]
+macro_rules! warn {
+    ($feature:ident, $( $message:tt )+) => {{
+        let feature = $crate::Feature::$feature;
+        if feature.is_enabled() {
+            logging::warn_with_peers!(
+                feature = ?feature,
+                $( $message )+
+            );
         }
     }};
 }

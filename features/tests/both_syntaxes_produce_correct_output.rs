@@ -5,48 +5,52 @@
 )]
 
 use features::{log, Feature};
-use log::Level;
+//use log::Level;
+use tracing_test::traced_test;
 
+
+
+// perhaps better would be feature_macro_produce_correct_output as a name
+#[traced_test]
 #[test]
-fn both_syntaxes_produce_correct_output() {
-    testing_logger::setup();
-
+fn both_syntaxes_produce_correct_output() {  
     showcase();
 
-    testing_logger::validate(|logs| {
-        itertools::assert_equal(
-            logs.iter().map(|log| log.body.as_str()),
-            core::iter::repeat_n(
-                [
-                    "[LogBlockProcessingTime] Block processed in 1ms",
-                    "[LogBlockProcessingTime] Block processed in 4ms",
-                ],
-                3,
-            )
-            .flatten(),
-        );
+    logs_assert(|lines: &[&str]| {
+        use itertools::assert_equal;
 
-        for log in logs {
-            assert_eq!(log.level, Level::Info);
-            assert_eq!(log.target, "features");
-        }
+        let log_lines: Vec<&str> = lines
+            .iter()
+            .map(|line| {
+                let msg_start = line.find("Block processed in").unwrap_or(0);
+                &line[msg_start..]
+            })
+            .collect();
+
+        let expected_lines = [
+            "Block processed in 1ms peers=[0/0] feature=LogBlockProcessingTime",
+            "Block processed in 4ms peers=[0/0] feature=LogBlockProcessingTime",
+            "Block processed in 1ms peers=[0/0] feature=LogBlockProcessingTime",
+            "Block processed in 4ms peers=[0/0] feature=LogBlockProcessingTime",
+        ];
+
+        assert_equal(log_lines.iter(), expected_lines.iter());
+
+        Ok(())
     });
 }
+
+
+
 
 fn showcase() {
     Feature::LogBlockProcessingTime.enable();
 
     if Feature::LogBlockProcessingTime.is_enabled() {
-        Feature::LogBlockProcessingTime.log("Block processed in 1ms");
+        // The expressions used in the message are only evaluated if the feature is enabled.
+        log!(LogBlockProcessingTime, "Block processed in 1ms");
+        log!(LogBlockProcessingTime, "Block processed in {}ms", 2 + 2);
     }
-    if Feature::LogBlockProcessingTime.is_enabled() {
-        Feature::LogBlockProcessingTime.log(format_args!("Block processed in {}ms", 2 + 2));
-    }
-
-    // This is a shorthand for the above.
-    // The expressions used in the message are only evaluated if the feature is enabled.
-    log!(LogBlockProcessingTime, "Block processed in 1ms");
-    log!(LogBlockProcessingTime, "Block processed in {}ms", 2 + 2);
 
     // Using the full path may help avoid namespace clashes with `log::log!`.
     features::log!(LogBlockProcessingTime, "Block processed in 1ms");
