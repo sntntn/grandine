@@ -8,6 +8,7 @@ use features::{log, Feature};
 //use log::Level;
 use tracing_test::traced_test;
 
+#[expect(clippy::string_slice)]
 #[traced_test]
 #[test]
 fn feature_macro_produce_correct_output() {  

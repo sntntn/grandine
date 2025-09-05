@@ -1532,7 +1532,7 @@ where
         Ok(())
     }
 
-    #[expect(clippy::cognitive_complexity)]
+    //#[expect(clippy::cognitive_complexity)]
     #[expect(clippy::too_many_lines)]
     fn accept_block(
         &mut self,
