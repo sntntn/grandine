@@ -8,12 +8,9 @@ use features::{log, Feature};
 //use log::Level;
 use tracing_test::traced_test;
 
-
-
-// perhaps better would be feature_macro_produce_correct_output as a name
 #[traced_test]
 #[test]
-fn both_syntaxes_produce_correct_output() {  
+fn feature_macro_produce_correct_output() {  
     showcase();
 
     logs_assert(|lines: &[&str]| {
