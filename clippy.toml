@@ -1,5 +1,7 @@
 avoid-breaking-exported-api = false
 
+cognitive-complexity-threshold = 100
+
 doc-valid-idents = [
     '..',
     'Eth1Data',
