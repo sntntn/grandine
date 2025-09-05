@@ -89,12 +89,13 @@ impl Feature {
     // }
 }
 
+
 #[macro_export]
 macro_rules! log {
     ($feature:ident, $( $message:tt )+) => {{
         let feature = $crate::Feature::$feature;
         if feature.is_enabled() {
-            logging::info_with_peers!(
+            ::logging::info_with_peers!(
                 feature = ?feature,
                 $( $message )+
             );
@@ -107,7 +108,7 @@ macro_rules! warn {
     ($feature:ident, $( $message:tt )+) => {{
         let feature = $crate::Feature::$feature;
         if feature.is_enabled() {
-            logging::warn_with_peers!(
+            ::logging::warn_with_peers!(
                 feature = ?feature,
                 $( $message )+
             );
