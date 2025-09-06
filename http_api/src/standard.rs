@@ -2337,6 +2337,7 @@ pub async fn validator_blinded_block<P: Preset, W: Wait>(
 }
 
 /// `GET /eth/v2/validator/blocks/{slot}`
+#[expect(clippy::type_complexity)]
 #[instrument( parent = None, skip_all, fields(slot = %slot))]
 pub async fn validator_block<P: Preset, W: Wait>(
     State(chain_config): State<Arc<ChainConfig>>,
