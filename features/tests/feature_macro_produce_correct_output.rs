@@ -11,7 +11,7 @@ use tracing_test::traced_test;
 #[expect(clippy::string_slice)]
 #[traced_test]
 #[test]
-fn feature_macro_produce_correct_output() {  
+fn feature_macro_produce_correct_output() {
     showcase();
 
     logs_assert(|lines: &[&str]| {
@@ -37,9 +37,6 @@ fn feature_macro_produce_correct_output() {
         Ok(())
     });
 }
-
-
-
 
 fn showcase() {
     Feature::LogBlockProcessingTime.enable();

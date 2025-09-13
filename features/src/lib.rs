@@ -4,9 +4,7 @@
               See <https://github.com/rust-lang/rust/issues/57274>."
 )]
 
-use core::{
-    sync::atomic::{AtomicBool, Ordering},
-};
+use core::sync::atomic::{AtomicBool, Ordering};
 
 use parse_display::{Display, FromStr};
 use variant_count::VariantCount;
@@ -77,7 +75,7 @@ impl Feature {
     // pub fn log(self, message: impl Display) {
     //     logging::info_with_peers!(
     //         feature = ?self,
-    //         %message        
+    //         %message
     //     );
     // }
 
@@ -88,7 +86,6 @@ impl Feature {
     //     );
     // }
 }
-
 
 #[macro_export]
 macro_rules! log {
