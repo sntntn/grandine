@@ -17,6 +17,7 @@ dependencies = [
  "fork_choice_store",
  "futures",
  "itertools 0.14.0",
+ "logging",
  "pubkey_cache",
  "rand 0.8.5",
  "tempfile",
@@ -650,11 +651,12 @@ dependencies = [
  "futures",
  "helper_functions",
  "itertools 0.14.0",
- "log",
+ "logging",
  "prometheus_metrics",
  "pubkey_cache",
  "rayon",
  "std_ext",
+ "tracing",
  "types",
 ]
 
@@ -1019,7 +1021,7 @@ dependencies = [
  "hex-literal",
  "itertools 0.14.0",
  "keymanager",
- "log",
+ "logging",
  "operation_pools",
  "prometheus_metrics",
  "pubkey_cache",
@@ -1030,6 +1032,7 @@ dependencies = [
  "tap",
  "test-case",
  "tokio",
+ "tracing",
  "transition_functions",
  "try_from_iterator",
  "tynm",
@@ -1206,7 +1209,7 @@ dependencies = [
  "hex-literal",
  "http_api_utils",
  "itertools 0.14.0",
- "log",
+ "logging",
  "mime",
  "prometheus_metrics",
  "pubkey_cache",
@@ -1217,6 +1220,7 @@ dependencies = [
  "ssz",
  "test-case",
  "thiserror 2.0.12",
+ "tracing",
  "typenum",
  "types",
 ]
@@ -1938,9 +1942,10 @@ dependencies = [
  "dedicated_executor",
  "features",
  "fs-err",
- "log",
+ "logging",
  "num_cpus",
  "ssz",
+ "tracing",
  "types",
 ]
 
@@ -1954,7 +1959,7 @@ dependencies = [
  "futures",
  "im",
  "itertools 0.14.0",
- "log",
+ "logging",
  "reth-libmdbx",
  "snap",
  "std_ext",
@@ -1962,6 +1967,7 @@ dependencies = [
  "tempfile",
  "test-case",
  "thiserror 2.0.12",
+ "tracing",
  "unwrap_none",
 ]
 
@@ -2000,12 +2006,14 @@ dependencies = [
  "features",
  "interop",
  "itertools 0.14.0",
+ "logging",
  "pubkey_cache",
  "spec_test_utils",
  "ssz",
  "std_ext",
  "test-generator",
  "thiserror 2.0.12",
+ "tracing",
  "typenum",
  "types",
 ]
@@ -2210,10 +2218,11 @@ dependencies = [
  "futures",
  "helper_functions",
  "liveness_tracker",
- "log",
+ "logging",
  "pubkey_cache",
  "thiserror 2.0.12",
  "tokio",
+ "tracing",
  "typenum",
  "types",
 ]
@@ -2563,7 +2572,7 @@ dependencies = [
  "futures",
  "genesis",
  "itertools 0.14.0",
- "log",
+ "logging",
  "prometheus_metrics",
  "pubkey_cache",
  "reqwest",
@@ -2572,6 +2581,7 @@ dependencies = [
  "thiserror 2.0.12",
  "tokio",
  "tokio-stream",
+ "tracing",
  "types",
 ]
 
@@ -2601,7 +2611,7 @@ dependencies = [
  "httpmock",
  "itertools 0.14.0",
  "jwt-simple",
- "log",
+ "logging",
  "memoffset",
  "panics",
  "prometheus_metrics",
@@ -2616,6 +2626,7 @@ dependencies = [
  "test-case",
  "thiserror 2.0.12",
  "tokio",
+ "tracing",
  "typenum",
  "types",
  "unwrap_none",
@@ -2662,6 +2673,7 @@ dependencies = [
  "libp2p",
  "libp2p-mplex",
  "local-ip-address",
+ "logging",
  "lru 0.16.0",
  "once_cell",
  "parking_lot",
@@ -2675,9 +2687,6 @@ dependencies = [
  "regex",
  "serde",
  "sha2",
- "slog",
- "slog-async",
- "slog-term",
  "smallvec",
  "snap",
  "ssz",
@@ -2688,6 +2697,8 @@ dependencies = [
  "tokio",
  "tokio-io-timeout",
  "tokio-util",
+ "tracing",
+ "tracing-subscriber",
  "try_from_iterator",
  "typenum",
  "types",
@@ -2778,12 +2789,13 @@ dependencies = [
  "futures",
  "hex",
  "hex-literal",
- "log",
+ "logging",
  "serde",
  "serde_json",
  "serde_utils",
  "ssz",
  "thiserror 2.0.12",
+ "tracing",
  "typenum",
  "types",
 ]
@@ -2839,8 +2851,10 @@ version = "0.0.0"
 dependencies = [
  "itertools 0.14.0",
  "log",
+ "logging",
  "parse-display",
- "testing_logger",
+ "tracing",
+ "tracing-test",
  "variant_count",
 ]
 
@@ -2950,7 +2964,7 @@ dependencies = [
  "helper_functions",
  "http_api_utils",
  "itertools 0.14.0",
- "log",
+ "logging",
  "mime",
  "nonzero_ext",
  "num-traits",
@@ -2972,6 +2986,7 @@ dependencies = [
  "tempfile",
  "test-generator",
  "thiserror 2.0.12",
+ "tracing",
  "transition_functions",
  "tynm",
  "types",
@@ -2997,7 +3012,7 @@ dependencies = [
  "im",
  "itertools 0.14.0",
  "kzg_utils",
- "log",
+ "logging",
  "prometheus_metrics",
  "pubkey_cache",
  "serde",
@@ -3008,6 +3023,7 @@ dependencies = [
  "strum",
  "tap",
  "thiserror 2.0.12",
+ "tracing",
  "transition_functions",
  "tynm",
  "typenum",
@@ -3839,7 +3855,7 @@ dependencies = [
  "itertools 0.14.0",
  "keymanager",
  "liveness_tracker",
- "log",
+ "logging",
  "mediatype",
  "mime",
  "num_cpus",
@@ -3870,6 +3886,7 @@ dependencies = [
  "tokio",
  "tokio-stream",
  "tower-http",
+ "tracing",
  "transition_functions",
  "try_from_iterator",
  "typenum",
@@ -3894,7 +3911,7 @@ dependencies = [
  "http 1.3.1",
  "http-body-util",
  "itertools 0.14.0",
- "log",
+ "logging",
  "mime",
  "parse-display",
  "prometheus_metrics",
@@ -4404,17 +4421,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "is-terminal"
-version = "0.4.16"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e04d7f318608d35d4b61ddd75cbdaee86b023ebe2bd5a66ee0915f0bf93095a9"
-dependencies = [
- "hermit-abi",
- "libc",
- "windows-sys 0.59.0",
-]
-
-[[package]]
 name = "is_terminal_polyfill"
 version = "1.70.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4541,7 +4547,7 @@ dependencies = [
  "helper_functions",
  "hex-literal",
  "itertools 0.14.0",
- "log",
+ "logging",
  "reqwest",
  "serde",
  "serde_json",
@@ -4552,6 +4558,7 @@ dependencies = [
  "tempfile",
  "thiserror 2.0.12",
  "tokio",
+ "tracing",
  "types",
  "uuid",
  "validator_key_cache",
@@ -5125,9 +5132,10 @@ dependencies = [
  "futures",
  "helper_functions",
  "itertools 0.14.0",
- "log",
+ "logging",
  "operation_pools",
  "prometheus_metrics",
+ "tracing",
  "tynm",
  "types",
 ]
@@ -5276,7 +5284,7 @@ dependencies = [
  "grandine_version",
  "helper_functions",
  "http_api_utils",
- "log",
+ "logging",
  "num_threads",
  "p2p",
  "prometheus",
@@ -5293,6 +5301,7 @@ dependencies = [
  "tokio",
  "tokio-stream",
  "tower-http",
+ "tracing",
  "transition_functions",
  "types",
  "winsafe",
@@ -5828,7 +5837,7 @@ dependencies = [
  "helper_functions",
  "http_api_utils",
  "itertools 0.14.0",
- "log",
+ "logging",
  "prometheus_metrics",
  "pubkey_cache",
  "rayon",
@@ -5839,6 +5848,7 @@ dependencies = [
  "tap",
  "thiserror 2.0.12",
  "tokio",
+ "tracing",
  "transition_functions",
  "try_from_iterator",
  "tynm",
@@ -5914,8 +5924,6 @@ dependencies = [
  "serde",
  "serde_utils",
  "serde_with",
- "slog",
- "slog-stdlog",
  "ssz",
  "std_ext",
  "strum",
@@ -5923,6 +5931,7 @@ dependencies = [
  "thiserror 2.0.12",
  "tokio",
  "tokio-stream",
+ "tracing",
  "transition_functions",
  "tynm",
  "typenum",
@@ -5956,7 +5965,8 @@ name = "panics"
 version = "0.0.0"
 dependencies = [
  "anyhow",
- "log",
+ "logging",
+ "tracing",
 ]
 
 [[package]]
@@ -6430,11 +6440,12 @@ dependencies = [
  "anyhow",
  "features",
  "futures",
- "log",
+ "logging",
  "once_cell",
  "prometheus",
  "tokio",
  "tokio-stream",
+ "tracing",
  "types",
 ]
 
@@ -6504,10 +6515,11 @@ dependencies = [
  "database",
  "eth2_cache_utils",
  "hex-literal",
- "log",
+ "logging",
  "prometheus_metrics",
  "std_ext",
  "tempfile",
+ "tracing",
  "tynm",
  "types",
 ]
@@ -7079,7 +7091,7 @@ dependencies = [
  "http_api_utils",
  "keymanager",
  "liveness_tracker",
- "log",
+ "logging",
  "metrics",
  "nonzero_ext",
  "num_cpus",
@@ -7097,6 +7109,7 @@ dependencies = [
  "std_ext",
  "thiserror 2.0.12",
  "tokio",
+ "tracing",
  "types",
  "validator",
  "validator_statistics",
@@ -7741,7 +7754,7 @@ dependencies = [
  "hex-literal",
  "httpmock",
  "itertools 0.14.0",
- "log",
+ "logging",
  "prometheus_metrics",
  "rayon",
  "reqwest",
@@ -7753,6 +7766,7 @@ dependencies = [
  "std_ext",
  "thiserror 2.0.12",
  "tokio",
+ "tracing",
  "types",
 ]
 
@@ -7798,11 +7812,12 @@ dependencies = [
  "features",
  "futures",
  "helper_functions",
- "log",
+ "logging",
  "p2p",
  "serde",
  "ssz",
  "thiserror 2.0.12",
+ "tracing",
  "types",
  "unwrap_none",
 ]
@@ -7822,7 +7837,7 @@ dependencies = [
  "helper_functions",
  "hex-literal",
  "itertools 0.14.0",
- "log",
+ "logging",
  "pubkey_cache",
  "refinery",
  "rusqlite",
@@ -7834,60 +7849,8 @@ dependencies = [
  "test-case",
  "test-generator",
  "thiserror 2.0.12",
+ "tracing",
  "types",
-]
-
-[[package]]
-name = "slog"
-version = "2.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8347046d4ebd943127157b94d63abb990fcf729dc4e9978927fdf4ac3c998d06"
-
-[[package]]
-name = "slog-async"
-version = "2.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72c8038f898a2c79507940990f05386455b3a317d8f18d4caea7cbc3d5096b84"
-dependencies = [
- "crossbeam-channel",
- "slog",
- "take_mut",
- "thread_local",
-]
-
-[[package]]
-name = "slog-scope"
-version = "4.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2f95a4b4c3274cd2869549da82b57ccc930859bdbf5bcea0424bc5f140b3c786"
-dependencies = [
- "arc-swap",
- "lazy_static",
- "slog",
-]
-
-[[package]]
-name = "slog-stdlog"
-version = "4.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6706b2ace5bbae7291d3f8d2473e2bfab073ccd7d03670946197aec98471fa3e"
-dependencies = [
- "log",
- "slog",
- "slog-scope",
-]
-
-[[package]]
-name = "slog-term"
-version = "2.9.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b6e022d0b998abfe5c3782c1f03551a596269450ccd677ea51c56f8b214610e8"
-dependencies = [
- "is-terminal",
- "slog",
- "term",
- "thread_local",
- "time",
 ]
 
 [[package]]
@@ -8068,11 +8031,12 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "im",
- "log",
+ "logging",
  "parking_lot",
  "std_ext",
  "tap",
  "thiserror 2.0.12",
+ "tracing",
  "types",
 ]
 
@@ -8266,12 +8230,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7b2093cf4c8eb1e67749a6762251bc9cd836b6fc171623bd0a9d324d37af2417"
 
 [[package]]
-name = "take_mut"
-version = "0.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f764005d11ee5f36500a149ace24e00e3da98b0158b3e2d53a7495660d3f4d60"
-
-[[package]]
 name = "tap"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -8344,15 +8302,6 @@ dependencies = [
  "proc-macro2 0.4.30",
  "quote 0.6.13",
  "syn 0.15.44",
-]
-
-[[package]]
-name = "testing_logger"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6d92b727cb45d33ae956f7f46b966b25f1bc712092aeef9dba5ac798fc89f720"
-dependencies = [
- "log",
 ]
 
 [[package]]
@@ -8758,6 +8707,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "tracing-test"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "557b891436fe0d5e0e363427fc7f217abf9ccd510d5136549847bdcbcd011d68"
+dependencies = [
+ "tracing-core",
+ "tracing-subscriber",
+ "tracing-test-macro",
+]
+
+[[package]]
+name = "tracing-test-macro"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "04659ddb06c87d233c566112c1c9c5b9e98256d9af50ec3bc9c8327f873a7568"
+dependencies = [
+ "quote 1.0.40",
+ "syn 2.0.104",
+]
+
+[[package]]
 name = "transition_functions"
 version = "0.0.0"
 dependencies = [
@@ -9048,7 +9018,7 @@ dependencies = [
  "itertools 0.14.0",
  "keymanager",
  "liveness_tracker",
- "log",
+ "logging",
  "once_cell",
  "operation_pools",
  "p2p",
@@ -9072,6 +9042,7 @@ dependencies = [
  "thiserror 2.0.12",
  "tokio",
  "tower-http",
+ "tracing",
  "try_from_iterator",
  "tynm",
  "typenum",
@@ -9088,11 +9059,12 @@ dependencies = [
  "bls",
  "eip_2335",
  "fs-err",
- "log",
+ "logging",
  "serde_json",
  "sha2",
  "ssz",
  "tap",
+ "tracing",
  "try_from_iterator",
  "typenum",
  "uuid",
@@ -9108,11 +9080,13 @@ dependencies = [
  "fork_choice_control",
  "helper_functions",
  "log",
+ "logging",
  "num-traits",
  "prometheus_metrics",
  "serde",
  "thiserror 2.0.12",
  "tokio",
+ "tracing",
  "tynm",
  "typenum",
  "types",
