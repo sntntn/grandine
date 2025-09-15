@@ -893,7 +893,6 @@ impl Network {
 
 impl GrandineArgs {
     // This is not a `TryFrom` impl because this has side effects.
-    //#[expect(clippy::cognitive_complexity)]
     #[expect(clippy::too_many_lines)]
     pub fn try_into_config(self) -> Result<GrandineConfig> {
         let Self {

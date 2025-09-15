@@ -228,7 +228,6 @@ impl<P: Preset> BlockSyncService<P> {
         Ok(service)
     }
 
-    //#[expect(clippy::cognitive_complexity)]
     #[expect(clippy::too_many_lines)]
     pub async fn run(mut self) -> Result<()> {
         let mut interval =
