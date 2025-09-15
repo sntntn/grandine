@@ -1202,7 +1202,7 @@ pub async fn blob_sidecars<P: Preset, W: Wait>(
 }
 
 /// `POST /eth/v1/beacon/blocks`
-#[instrument( parent = None, skip_all)]
+#[instrument(parent = None, skip_all)]
 pub async fn publish_block<P: Preset, W: Wait>(
     State(controller): State<ApiController<P, W>>,
     State(api_to_p2p_tx): State<UnboundedSender<ApiToP2p<P>>>,
@@ -1222,7 +1222,7 @@ pub async fn publish_block<P: Preset, W: Wait>(
 }
 
 /// `POST /eth/v1/beacon/blinded_blocks`
-#[instrument( parent = None, skip_all, fields(block_slot = %signed_blinded_block.message().slot()))]
+#[instrument(parent = None, skip_all, fields(block_slot = %signed_blinded_block.message().slot()))]
 pub async fn publish_blinded_block<P: Preset, W: Wait>(
     State(block_producer): State<Arc<BlockProducer<P, W>>>,
     State(controller): State<ApiController<P, W>>,
@@ -1628,7 +1628,7 @@ pub async fn pool_attester_slashings_v2<P: Preset, W: Wait>(
 }
 
 /// `POST /eth/v1/beacon/pool/attestations`
-#[instrument( parent = None, skip_all, fields(attestation_count = attestations.len()))]
+#[instrument(parent = None, skip_all, fields(attestation_count = attestations.len()))]
 pub async fn submit_pool_attestations<P: Preset, W: Wait>(
     State(controller): State<ApiController<P, W>>,
     State(api_to_p2p_tx): State<UnboundedSender<ApiToP2p<P>>>,
@@ -2269,7 +2269,7 @@ pub async fn validator_aggregate_attestation_v2<P: Preset, W: Wait>(
 }
 
 /// `GET /eth/v1/validator/blinded_blocks/{slot}`
-#[instrument( parent = None, skip_all, fields(slot = %slot))]
+#[instrument(parent = None, skip_all, fields(slot = %slot))]
 pub async fn validator_blinded_block<P: Preset, W: Wait>(
     State(chain_config): State<Arc<ChainConfig>>,
     State(block_producer): State<Arc<BlockProducer<P, W>>>,
@@ -2338,7 +2338,7 @@ pub async fn validator_blinded_block<P: Preset, W: Wait>(
 
 /// `GET /eth/v2/validator/blocks/{slot}`
 #[expect(clippy::type_complexity)]
-#[instrument( parent = None, skip_all, fields(slot = %slot))]
+#[instrument(parent = None, skip_all, fields(slot = %slot))]
 pub async fn validator_block<P: Preset, W: Wait>(
     State(chain_config): State<Arc<ChainConfig>>,
     State(block_producer): State<Arc<BlockProducer<P, W>>>,
@@ -2485,7 +2485,7 @@ pub async fn validator_block_v3<P: Preset, W: Wait>(
 }
 
 /// `GET /eth/v1/validator/attestation_data`
-#[instrument( parent = None, skip_all, fields(slot = %query.slot, committee_index = %query.committee_index))]
+#[instrument(parent = None, skip_all, fields(slot = %query.slot, committee_index = %query.committee_index))]
 pub async fn validator_attestation_data<P: Preset, W: Wait>(
     State(controller): State<ApiController<P, W>>,
     State(metrics): State<Option<Arc<Metrics>>>,
@@ -2902,7 +2902,7 @@ fn state_validators<P: Preset, W: Wait>(
         .finalized(finalized))
 }
 
-#[instrument( parent = None, skip_all, fields(block_root = %block.message().hash_tree_root()))]
+#[instrument(parent = None, skip_all, fields(block_root = %block.message().hash_tree_root()))]
 async fn publish_signed_block<P: Preset, W: Wait>(
     block: Arc<SignedBeaconBlock<P>>,
     blob_sidecars: Vec<BlobSidecar<P>>,

@@ -60,7 +60,7 @@ pub struct HttpApi<P: Preset, W: Wait> {
 }
 
 impl<P: Preset, W: Wait> HttpApi<P, W> {
-    #[instrument( parent = None, skip(self), fields(address = %self.http_api_config.address))]
+    #[instrument(parent = None, skip(self), fields(address = %self.http_api_config.address))]
     pub async fn run(self) -> Result<()> {
         let listener = self.http_api_config.listener().await?;
         self.run_internal(|_, router| router, listener).await
@@ -70,7 +70,7 @@ impl<P: Preset, W: Wait> HttpApi<P, W> {
     // Passing in `AddrIncoming` achieves 2 things:
     // - It ensures that the socket is bound and listening by the time we submit requests.
     // - It allows us to extract the port assigned by binding to port 0.
-    #[instrument( parent = None, skip_all)]
+    #[instrument(parent = None, skip_all)]
     pub(crate) async fn run_internal(
         self,
         extend_router: impl FnOnce(NormalState<P, W>, Router) -> Router + Send,
