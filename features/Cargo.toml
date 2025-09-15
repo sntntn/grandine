@@ -8,9 +8,9 @@ workspace = true
 
 [dependencies]
 log = { workspace = true }
-tracing = { workspace = true }
 logging = { workspace = true }
 parse-display = { workspace = true }
+tracing = { workspace = true }
 variant_count = { workspace = true }
 
 [dev-dependencies]

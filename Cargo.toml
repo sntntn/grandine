@@ -436,7 +436,6 @@ tempfile = '3'
 test-case = '3'
 test-generator = '0.3'
 testing_logger = '0.1'
-tracing-test = "0.2"
 thiserror = '2'
 tikv-jemalloc-ctl = { version = '0.6', features = ['stats'] }
 tikv-jemallocator = { version = '0.6', features = ['stats', 'background_threads_runtime_support'] }
@@ -449,6 +448,7 @@ tower = { version = '0.5', features = ['timeout'] }
 tower-http = { version = '0.6', features = ['cors', 'trace'] }
 tracing = '0.1'
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+tracing-test = "0.2"
 triomphe = '0.1'
 tynm = '0.2'
 typenum = '1'

@@ -15,8 +15,8 @@ futures = { workspace = true }
 helper_functions = { workspace = true }
 itertools = { workspace = true }
 logging = { workspace = true }
-tracing = { workspace = true }
 operation_pools = { workspace = true }
 prometheus_metrics = { workspace = true }
+tracing = { workspace = true }
 tynm = { workspace = true }
 types = { workspace = true }
