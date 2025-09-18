@@ -349,10 +349,25 @@ fn main() -> ExitCode {
 
 #[expect(clippy::too_many_lines)]
 fn try_main() -> Result<()> {
-    binary_utils::initialize_tracing_logger(
+    let log_handle = binary_utils::initialize_tracing_logger(
         module_path!(),
         cfg!(feature = "logger-always-write-style"),
     )?;
+
+    if let Err(e) = log_handle.modify(|filter| {
+        match "database=debug".parse() {
+            Ok(directive) => {
+                let old = std::mem::take(filter);
+                *filter = old.add_directive(directive);
+            }
+            Err(e) => {
+                eprintln!("failed to parse directive: {e}");
+            }
+        }
+    }) {
+        eprintln!("failed to reload filter: {e}");
+    }
+    
     binary_utils::initialize_rayon()?;
 
     info_with_peers!("Tracing started!");
