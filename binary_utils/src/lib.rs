@@ -1,9 +1,14 @@
 use anyhow::Result;
 use rayon::ThreadPoolBuilder;
 use std::io::{self, IsTerminal};
-use tracing_subscriber::{filter::LevelFilter, fmt, EnvFilter};
+use tracing_subscriber::{filter::LevelFilter, fmt, reload::{self, Handle}, EnvFilter};
+use tracing_subscriber::prelude::*;
 
-pub fn initialize_tracing_logger(module_path: &str, always_write_style: bool) -> Result<()> {
+
+pub fn initialize_tracing_logger(
+        module_path: &str, 
+        always_write_style: bool) 
+    -> Result<Handle<EnvFilter, impl Send + Sync> > {
     let base_filter =
         EnvFilter::try_from_env("GRANDINE_LOG").or_else(|_| EnvFilter::try_from_default_env());
 
@@ -55,17 +60,19 @@ pub fn initialize_tracing_logger(module_path: &str, always_write_style: bool) ->
 
     let enable_ansi = always_write_style || io::stdout().is_terminal();
 
-    fmt()
-        .with_env_filter(filter)
-        .compact()
-        .with_thread_ids(true)
-        .with_target(true)
-        .with_file(false)
-        .with_line_number(true)
-        .with_ansi(enable_ansi)
+    let (filter_layer, handle) = reload::Layer::new(filter);
+    tracing_subscriber::registry()
+        .with(fmt::layer()
+            .compact()
+            .with_thread_ids(true)
+            .with_target(true)
+            .with_file(false)
+            .with_line_number(true)
+            .with_ansi(enable_ansi))
+        .with(filter_layer)
         .init();
 
-    Ok(())
+    Ok(handle)
 }
 
 pub fn initialize_rayon() -> Result<()> {
