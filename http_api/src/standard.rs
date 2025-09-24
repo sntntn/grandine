@@ -10,10 +10,11 @@ use axum::{
     http::{HeaderMap, StatusCode},
     response::{
         sse::{Event, KeepAlive},
-        IntoResponse as _, Response, Sse,
+        IntoResponse, Response, Sse,
     },
     Json,
 };
+use binary_utils::TracingHandle;
 use block_producer::{BlockBuildOptions, BlockProducer, ProposerData, ValidatorBlindedBlock};
 use bls::{traits::SignatureBytes as _, PublicKeyBytes, SignatureBytes};
 use builder_api::unphased::containers::SignedValidatorRegistrationV1;
@@ -215,6 +216,12 @@ pub struct ExpectedWithdrawalsQuery {
 #[serde(deny_unknown_fields)]
 pub struct PublishBlockQuery {
     broadcast_validation: Option<BroadcastValidation>,
+}
+
+#[derive(Deserialize)]
+pub struct LogLevelRequest {
+    target: String,
+    level: String,
 }
 
 #[expect(clippy::struct_field_names)]
@@ -2836,6 +2843,33 @@ pub async fn validator_beacon_committee_selections() -> Error {
 /// `POST /eth/v1/validator/sync_committee_selections`
 pub async fn validator_sync_committee_selections() -> Error {
     Error::EndpointNotImplemented
+}
+
+/// `POST /eth/v2/debug/tracing/log_level`
+pub async fn post_log_level(
+    State(handle): State<TracingHandle>,
+    Json(req): Json<LogLevelRequest>,
+) -> impl IntoResponse {
+    let directive_str = format!("{}={}", req.target, req.level);
+
+    match directive_str.parse() {
+        Ok(directive) => {
+            if let Err(e) = handle.modify(|filter| {
+                let old = std::mem::take(filter);
+                *filter = old.add_directive(directive);
+            }) {
+                return (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    format!("failed to reload filter: {e}"),
+                );
+            }
+            (StatusCode::OK, "log level updated".to_string())
+        }
+        Err(e) => (
+            StatusCode::BAD_REQUEST,
+            format!("invalid directive: {e}"),
+        ),
+    }
 }
 
 fn state_validators<P: Preset, W: Wait>(

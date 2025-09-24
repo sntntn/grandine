@@ -2,13 +2,43 @@ use anyhow::Result;
 use rayon::ThreadPoolBuilder;
 use std::io::{self, IsTerminal};
 use tracing_subscriber::{filter::LevelFilter, fmt, reload::{self, Handle}, EnvFilter};
-use tracing_subscriber::prelude::*;
+use tracing_subscriber::{prelude::*, layer::Layered};
+
+//type TracingHandle =  Handle<EnvFilter, Layered<fmt::Layer<tracing_subscriber::Registry, fmt::format::DefaultFields, fmt::format::Format<fmt::format::Compact>>, tracing_subscriber::Registry>>;
+//pub type TracingHandle = Handle<EnvFilter, Box<dyn Send + Sync>>;
+// type TracingHandle = Handle<
+//     EnvFilter,
+//     Layered<
+//         fmt::Layer<tracing_subscriber::Registry, fmt::format::DefaultFields, fmt::format::Format<fmt::format::Compact>>,
+//         tracing_subscriber::Registry,
+//     >,
+// >;
+
+#[derive(Clone)]
+pub struct TracingHandle(
+    Handle<
+        EnvFilter,
+        Layered<
+            fmt::Layer<tracing_subscriber::Registry, fmt::format::DefaultFields, fmt::format::Format<fmt::format::Compact>>,
+            tracing_subscriber::Registry,
+        >,
+    >,
+);
+
+impl TracingHandle {
+    pub fn modify<F>(&self, f: F) -> Result<(), reload::Error>
+    where
+        F: FnOnce(&mut EnvFilter) -> (),
+    {
+        self.0.modify(f)
+    }
+}
 
 
 pub fn initialize_tracing_logger(
         module_path: &str, 
         always_write_style: bool) 
-    -> Result<Handle<EnvFilter, impl Send + Sync> > {
+    -> Result<TracingHandle> {
     let base_filter =
         EnvFilter::try_from_env("GRANDINE_LOG").or_else(|_| EnvFilter::try_from_default_env());
 
@@ -72,7 +102,7 @@ pub fn initialize_tracing_logger(
         .with(filter_layer)
         .init();
 
-    Ok(handle)
+    Ok(TracingHandle(handle))
 }
 
 pub fn initialize_rayon() -> Result<()> {

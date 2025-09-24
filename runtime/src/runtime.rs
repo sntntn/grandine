@@ -3,6 +3,7 @@ use std::{collections::HashSet, sync::Arc};
 
 use anyhow::Result;
 use attestation_verifier::AttestationVerifier;
+use binary_utils::TracingHandle;
 use block_producer::BlockProducer;
 use builder_api::{BuilderApi, BuilderConfig};
 use bytesize::ByteSize;
@@ -96,6 +97,7 @@ pub async fn run_after_genesis<P: Preset>(
     metrics_config: MetricsConfig,
     blacklisted_blocks: HashSet<H256>,
     report_validator_performance: bool,
+    tracing_handle: TracingHandle,
     eth1_api_to_metrics_tx: Option<UnboundedSender<Eth1ApiToMetrics>>,
     eth1_api_to_metrics_rx: Option<UnboundedReceiver<Eth1ApiToMetrics>>,
     restart_tx: UnboundedSender<RestartMessage>,
@@ -680,6 +682,7 @@ pub async fn run_after_genesis<P: Preset>(
         bls_to_execution_change_pool,
         channels: http_api_channels,
         metrics: metrics.clone(),
+        tracing_handle,
     };
 
     let join_mutator = async { tokio::task::spawn_blocking(|| mutator_handle.join()).await? };
