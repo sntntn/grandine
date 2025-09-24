@@ -9,6 +9,7 @@ use std::{
 
 use allocator as _;
 use anyhow::{bail, ensure, Result};
+use binary_utils::TracingHandle;
 use builder_api::BuilderConfig;
 use clap::{Error as ClapError, Parser as _};
 use database::{Database, DatabaseMode, RestartMessage};
@@ -103,6 +104,7 @@ struct Context {
     max_events: usize,
     metrics_config: MetricsConfig,
     track_liveness: bool,
+    tracing_handle: TracingHandle,
     detect_doppelgangers: bool,
     slashing_protection_history_limit: u64,
     validator_enabled: bool,
@@ -188,6 +190,7 @@ impl Context {
             max_events,
             metrics_config,
             track_liveness,
+            tracing_handle,
             detect_doppelgangers,
             slashing_protection_history_limit,
             validator_enabled,
@@ -309,6 +312,7 @@ impl Context {
             metrics_config,
             blacklisted_blocks,
             report_validator_performance,
+            tracing_handle,
             eth1_api_to_metrics_tx,
             eth1_api_to_metrics_rx,
             restart_tx,
@@ -354,19 +358,19 @@ fn try_main() -> Result<()> {
         cfg!(feature = "logger-always-write-style"),
     )?;
 
-    if let Err(e) = log_handle.modify(|filter| {
-        match "database=debug".parse() {
-            Ok(directive) => {
-                let old = std::mem::take(filter);
-                *filter = old.add_directive(directive);
-            }
-            Err(e) => {
-                eprintln!("failed to parse directive: {e}");
-            }
-        }
-    }) {
-        eprintln!("failed to reload filter: {e}");
-    }
+    // if let Err(e) = log_handle.modify(|filter| {
+    //     match "database=debug".parse() {
+    //         Ok(directive) => {
+    //             let old = std::mem::take(filter);
+    //             *filter = old.add_directive(directive);
+    //         }
+    //         Err(e) => {
+    //             eprintln!("failed to parse directive: {e}");
+    //         }
+    //     }
+    // }) {
+    //     eprintln!("failed to reload filter: {e}");
+    // }
     
     binary_utils::initialize_rayon()?;
 
@@ -578,6 +582,7 @@ fn try_main() -> Result<()> {
         max_events,
         metrics_config,
         track_liveness,
+        tracing_handle: log_handle,
         detect_doppelgangers,
         slashing_protection_history_limit,
         validator_enabled,

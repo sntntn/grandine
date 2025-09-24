@@ -3827,6 +3827,7 @@ dependencies = [
  "attestation_verifier",
  "axum",
  "axum-extra",
+ "binary_utils",
  "block_producer",
  "bls",
  "builder_api",
@@ -7068,6 +7069,7 @@ version = "0.0.0"
 dependencies = [
  "anyhow",
  "attestation_verifier",
+ "binary_utils",
  "block_producer",
  "builder_api",
  "bytesize",

@@ -3,6 +3,7 @@ use std::{collections::HashSet, sync::Arc};
 
 use anyhow::{Error as AnyhowError, Result};
 use axum::Router;
+use binary_utils::TracingHandle;
 use block_producer::BlockProducer;
 use bls::PublicKeyBytes;
 use eth1_api::{ApiController, Eth1Api};
@@ -57,6 +58,7 @@ pub struct HttpApi<P: Preset, W: Wait> {
     pub bls_to_execution_change_pool: Arc<BlsToExecutionChangePool>,
     pub channels: Channels<P>,
     pub metrics: Option<Arc<Metrics>>,
+    pub tracing_handle: TracingHandle,
 }
 
 impl<P: Preset, W: Wait> HttpApi<P, W> {
@@ -91,6 +93,7 @@ impl<P: Preset, W: Wait> HttpApi<P, W> {
             bls_to_execution_change_pool,
             channels,
             metrics,
+            tracing_handle,
         } = self;
 
         let HttpApiConfig {
@@ -128,6 +131,7 @@ impl<P: Preset, W: Wait> HttpApi<P, W> {
             api_to_p2p_tx,
             api_to_validator_tx,
             subnet_service_tx,
+            tracing_handle,
         };
 
         let router = extend_router(state.clone(), routing::normal_routes(state));
