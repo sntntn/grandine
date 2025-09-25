@@ -2865,10 +2865,7 @@ pub async fn post_log_level(
             }
             (StatusCode::OK, "log level updated".to_string())
         }
-        Err(e) => (
-            StatusCode::BAD_REQUEST,
-            format!("invalid directive: {e}"),
-        ),
+        Err(e) => (StatusCode::BAD_REQUEST, format!("invalid directive: {e}")),
     }
 }
 

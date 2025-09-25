@@ -371,7 +371,7 @@ fn try_main() -> Result<()> {
     // }) {
     //     eprintln!("failed to reload filter: {e}");
     // }
-    
+
     binary_utils::initialize_rayon()?;
 
     info_with_peers!("Tracing started!");
