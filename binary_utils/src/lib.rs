@@ -1,25 +1,24 @@
 use anyhow::Result;
 use rayon::ThreadPoolBuilder;
 use std::io::{self, IsTerminal};
-use tracing_subscriber::{filter::LevelFilter, fmt, reload::{self, Handle}, EnvFilter};
-use tracing_subscriber::{prelude::*, layer::Layered};
-
-//type TracingHandle =  Handle<EnvFilter, Layered<fmt::Layer<tracing_subscriber::Registry, fmt::format::DefaultFields, fmt::format::Format<fmt::format::Compact>>, tracing_subscriber::Registry>>;
-//pub type TracingHandle = Handle<EnvFilter, Box<dyn Send + Sync>>;
-// type TracingHandle = Handle<
-//     EnvFilter,
-//     Layered<
-//         fmt::Layer<tracing_subscriber::Registry, fmt::format::DefaultFields, fmt::format::Format<fmt::format::Compact>>,
-//         tracing_subscriber::Registry,
-//     >,
-// >;
+use tracing_subscriber::{
+    filter::LevelFilter,
+    fmt,
+    reload::{self, Handle},
+    EnvFilter,
+};
+use tracing_subscriber::{layer::Layered, prelude::*};
 
 #[derive(Clone)]
 pub struct TracingHandle(
     Handle<
         EnvFilter,
         Layered<
-            fmt::Layer<tracing_subscriber::Registry, fmt::format::DefaultFields, fmt::format::Format<fmt::format::Compact>>,
+            fmt::Layer<
+                tracing_subscriber::Registry,
+                fmt::format::DefaultFields,
+                fmt::format::Format<fmt::format::Compact>,
+            >,
             tracing_subscriber::Registry,
         >,
     >,
@@ -34,11 +33,10 @@ impl TracingHandle {
     }
 }
 
-
 pub fn initialize_tracing_logger(
-        module_path: &str, 
-        always_write_style: bool) 
-    -> Result<TracingHandle> {
+    module_path: &str,
+    always_write_style: bool,
+) -> Result<TracingHandle> {
     let base_filter =
         EnvFilter::try_from_env("GRANDINE_LOG").or_else(|_| EnvFilter::try_from_default_env());
 
@@ -92,13 +90,15 @@ pub fn initialize_tracing_logger(
 
     let (filter_layer, handle) = reload::Layer::new(filter);
     tracing_subscriber::registry()
-        .with(fmt::layer()
-            .compact()
-            .with_thread_ids(true)
-            .with_target(true)
-            .with_file(false)
-            .with_line_number(true)
-            .with_ansi(enable_ansi))
+        .with(
+            fmt::layer()
+                .compact()
+                .with_thread_ids(true)
+                .with_target(true)
+                .with_file(false)
+                .with_line_number(true)
+                .with_ansi(enable_ansi),
+        )
         .with(filter_layer)
         .init();
 
