@@ -51,6 +51,7 @@ use ssz::{BitList, BitVector, ContiguousList, ReadError};
 use static_assertions::assert_not_impl_any;
 use std_ext::ArcExt as _;
 use tap::{Conv as _, Pipe as _};
+use tracing::instrument;
 use try_from_iterator::TryFromIterator as _;
 use types::{
     altair::{
@@ -163,6 +164,12 @@ pub struct Validator<P: Preset, W: Wait> {
 impl<P: Preset, W: Wait + Sync> Validator<P, W> {
     #[expect(clippy::too_many_arguments)]
     #[must_use]
+    #[instrument(
+        parent = None,
+        level = "trace",
+        name = "validator_duties",
+        skip_all
+    )]
     pub fn new(
         validator_config: Arc<ValidatorConfig>,
         block_producer: Arc<BlockProducer<P, W>>,
@@ -736,6 +743,16 @@ impl<P: Preset, W: Wait + Sync> Validator<P, W> {
 
     /// <https://github.com/ethereum/consensus-specs/blob/b2f42bf4d79432ee21e2f2b3912ff4bbf7898ada/specs/phase0/validator.md#block-proposal>
     #[expect(clippy::too_many_lines)]
+    #[instrument(
+        parent = None,
+        level = "trace",
+        fields(
+            service = "validator",
+            slot = slot_head.slot()
+        ),
+        name = "validator_duties",
+        skip_all,
+    )]
     async fn propose(&mut self, wait_group: W, slot_head: &SlotHead<P>) -> Result<()> {
         if slot_head.slot() == GENESIS_SLOT {
             // All peers should already have the genesis block.
@@ -974,6 +991,15 @@ impl<P: Preset, W: Wait + Sync> Validator<P, W> {
     /// - <https://github.com/ethereum/consensus-specs/blob/b2f42bf4d79432ee21e2f2b3912ff4bbf7898ada/specs/phase0/validator.md#attesting>
     /// - <https://github.com/ethereum/consensus-specs/blob/b2f42bf4d79432ee21e2f2b3912ff4bbf7898ada/specs/phase0/validator.md#attestation-aggregation>
     #[expect(clippy::too_many_lines)]
+    #[instrument(
+        parent = None,
+        level = "trace",
+        fields(
+            service = "validator"
+        ),
+        name = "validator_duties",
+        skip_all
+    )]
     async fn attest_and_start_aggregating(
         &mut self,
         wait_group: &W,
@@ -1124,6 +1150,15 @@ impl<P: Preset, W: Wait + Sync> Validator<P, W> {
     }
 
     #[expect(clippy::too_many_lines)]
+    #[instrument(
+        parent = None,
+        level = "trace",
+        fields(
+            service = "validator"
+        ),
+        name = "validator_duties",
+        skip_all
+    )]
     async fn publish_aggregates_and_proofs(&self, wait_group: &W, slot_head: &SlotHead<P>) {
         if slot_head.optimistic {
             warn_with_peers!(
@@ -1263,6 +1298,15 @@ impl<P: Preset, W: Wait + Sync> Validator<P, W> {
     }
 
     /// <https://github.com/ethereum/consensus-specs/blob/v1.1.1/specs/altair/validator.md#broadcast-sync-committee-message>
+    #[instrument(
+        parent = None,
+        level = "trace",
+        fields(
+            service = "validator"
+        ),
+        name = "validator_duties",
+        skip_all
+    )]
     async fn publish_sync_committee_messages(
         &mut self,
         wait_group: &W,
@@ -1332,6 +1376,15 @@ impl<P: Preset, W: Wait + Sync> Validator<P, W> {
     }
 
     /// <https://github.com/ethereum/consensus-specs/blob/v1.1.1/specs/altair/validator.md#broadcast-sync-committee-contribution>
+    #[instrument(
+        parent = None,
+        level = "trace",
+        fields(
+            service = "validator"
+        ),
+        name = "validator_duties",
+        skip_all
+    )]
     async fn publish_contributions_and_proofs(&self, slot_head: &SlotHead<P>) {
         if !self.controller.is_forward_synced() {
             return;
@@ -1956,6 +2009,16 @@ impl<P: Preset, W: Wait + Sync> Validator<P, W> {
         });
     }
 
+    #[instrument(
+        parent = None,
+        level = "trace",
+        fields(
+            service = "validator",
+            current_epoch = current_epoch
+        ),
+        name = "validator_duties",
+        skip_all,
+    )]
     async fn register_validators(&mut self, current_epoch: Epoch) {
         if let Some(last_registration_epoch) = self.last_registration_epoch {
             let next_registration_epoch =
