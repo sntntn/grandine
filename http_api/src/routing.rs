@@ -87,7 +87,7 @@ pub struct NormalState<P: Preset, W: Wait> {
     pub api_to_p2p_tx: UnboundedSender<ApiToP2p<P>>,
     pub api_to_validator_tx: UnboundedSender<ApiToValidator<P>>,
     pub subnet_service_tx: UnboundedSender<ToSubnetService>,
-    pub tracing_handle: TracingHandle,
+    pub tracing_handle: Option<TracingHandle>,
 }
 
 // The `FromRef` derive macro cannot handle type parameters as of `axum` version 0.6.7.
@@ -200,7 +200,7 @@ impl<P: Preset, W: Wait> FromRef<NormalState<P, W>> for Option<Arc<Metrics>> {
     }
 }
 
-impl<P: Preset, W: Wait> FromRef<NormalState<P, W>> for TracingHandle {
+impl<P: Preset, W: Wait> FromRef<NormalState<P, W>> for Option<TracingHandle> {
     fn from_ref(state: &NormalState<P, W>) -> Self {
         state.tracing_handle.clone()
     }

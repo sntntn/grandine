@@ -58,7 +58,7 @@ pub struct HttpApi<P: Preset, W: Wait> {
     pub bls_to_execution_change_pool: Arc<BlsToExecutionChangePool>,
     pub channels: Channels<P>,
     pub metrics: Option<Arc<Metrics>>,
-    pub tracing_handle: TracingHandle,
+    pub tracing_handle: Option<TracingHandle>,
 }
 
 impl<P: Preset, W: Wait> HttpApi<P, W> {
