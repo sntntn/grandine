@@ -2856,7 +2856,7 @@ pub async fn post_log_level(
         Ok(directive) => {
             if let Some(handle) = handle {
                 if let Err(e) = handle.modify(|filter| {
-                    let old = std::mem::take(filter);
+                    let old = core::mem::take(filter);
                     *filter = old.add_directive(directive);
                 }) {
                     return (
@@ -2864,11 +2864,11 @@ pub async fn post_log_level(
                         format!("failed to reload filter: {e}"),
                     );
                 }
-                (StatusCode::OK, "log level updated".to_string())
+                (StatusCode::OK, "log level updated".to_owned())
             } else {
                 (
                     StatusCode::SERVICE_UNAVAILABLE,
-                    "tracing not available".to_string(),
+                    "tracing not available".to_owned(),
                 )
             }
         }
