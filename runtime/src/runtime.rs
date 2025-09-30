@@ -97,7 +97,7 @@ pub async fn run_after_genesis<P: Preset>(
     metrics_config: MetricsConfig,
     blacklisted_blocks: HashSet<H256>,
     report_validator_performance: bool,
-    tracing_handle: TracingHandle,
+    tracing_handle: Option<TracingHandle>,
     eth1_api_to_metrics_tx: Option<UnboundedSender<Eth1ApiToMetrics>>,
     eth1_api_to_metrics_rx: Option<UnboundedReceiver<Eth1ApiToMetrics>>,
     restart_tx: UnboundedSender<RestartMessage>,

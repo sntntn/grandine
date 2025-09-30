@@ -9,25 +9,22 @@ use tracing_subscriber::{
 };
 use tracing_subscriber::{layer::Layered, prelude::*};
 
-#[derive(Clone)]
-pub struct TracingHandle(
-    Handle<
-        EnvFilter,
-        Layered<
-            fmt::Layer<
-                tracing_subscriber::Registry,
-                fmt::format::DefaultFields,
-                fmt::format::Format<fmt::format::Compact>,
-            >,
-            tracing_subscriber::Registry,
-        >,
+type TracingLayered = Layered<
+    fmt::Layer<
+        tracing_subscriber::Registry,
+        fmt::format::DefaultFields,
+        fmt::format::Format<fmt::format::Compact>,
     >,
-);
+    tracing_subscriber::Registry,
+>;
+
+#[derive(Clone)]
+pub struct TracingHandle(Handle<EnvFilter, TracingLayered>);
 
 impl TracingHandle {
     pub fn modify<F>(&self, f: F) -> Result<(), reload::Error>
     where
-        F: FnOnce(&mut EnvFilter) -> (),
+        F: FnOnce(&mut EnvFilter),
     {
         self.0.modify(f)
     }

@@ -2847,23 +2847,30 @@ pub async fn validator_sync_committee_selections() -> Error {
 
 /// `POST /eth/v2/debug/tracing/log_level`
 pub async fn post_log_level(
-    State(handle): State<TracingHandle>,
+    State(handle): State<Option<TracingHandle>>,
     Json(req): Json<LogLevelRequest>,
 ) -> impl IntoResponse {
     let directive_str = format!("{}={}", req.target, req.level);
 
     match directive_str.parse() {
         Ok(directive) => {
-            if let Err(e) = handle.modify(|filter| {
-                let old = std::mem::take(filter);
-                *filter = old.add_directive(directive);
-            }) {
-                return (
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    format!("failed to reload filter: {e}"),
-                );
+            if let Some(handle) = handle {
+                if let Err(e) = handle.modify(|filter| {
+                    let old = core::mem::take(filter);
+                    *filter = old.add_directive(directive);
+                }) {
+                    return (
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        format!("failed to reload filter: {e}"),
+                    );
+                }
+                (StatusCode::OK, "log level updated".to_owned())
+            } else {
+                (
+                    StatusCode::SERVICE_UNAVAILABLE,
+                    "tracing not available".to_owned(),
+                )
             }
-            (StatusCode::OK, "log level updated".to_string())
         }
         Err(e) => (StatusCode::BAD_REQUEST, format!("invalid directive: {e}")),
     }
