@@ -46,6 +46,7 @@ use prometheus_metrics::Metrics;
 use pubkey_cache::PubkeyCache;
 use ssz::SszHash as _;
 use std_ext::ArcExt as _;
+use tracing::instrument;
 use types::{
     combined::{BeaconState, ExecutionPayloadParams, SignedBeaconBlock},
     deneb::containers::{BlobIdentifier, BlobSidecar},
@@ -338,6 +339,15 @@ where
     }
 
     #[expect(clippy::too_many_lines)]
+    #[instrument(
+        parent = None,
+        level = "trace",
+        fields(
+            service = "fork_choice"
+        ),
+        name = "fork_choice_controll",
+        skip_all
+    )]
     fn handle_tick(&mut self, wait_group: &W, tick: Tick) -> Result<()> {
         if tick.epoch::<P>() > self.store.current_epoch() {
             let checkpoint = self.store.unrealized_justified_checkpoint();
@@ -498,6 +508,15 @@ where
     }
 
     #[expect(clippy::too_many_lines)]
+    #[instrument(
+        parent = None,
+        level = "trace",
+        fields(
+            service = "fork_choice"
+        ),
+        name = "fork_choice_controll",
+        skip_all
+    )]
     fn handle_block(
         &mut self,
         wait_group: W,
@@ -1533,6 +1552,15 @@ where
     }
 
     #[expect(clippy::too_many_lines)]
+    #[instrument(
+        parent = None,
+        level = "trace",
+        fields(
+            service = "fork_choice"
+        ),
+        name = "fork_choice_controll",
+        skip_all
+    )]
     fn accept_block(
         &mut self,
         wait_group: &W,
