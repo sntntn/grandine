@@ -2,7 +2,11 @@ use anyhow::Result;
 use chrono::{Local, SecondsFormat};
 use logging::{debug_with_peers, exception};
 use rayon::ThreadPoolBuilder;
-use std::io::{self, IsTerminal};
+use std::{
+    fs,
+    io::{self, IsTerminal},
+    path::Path,
+};
 use tracing_subscriber::{
     filter::LevelFilter,
     fmt,
@@ -98,8 +102,33 @@ pub fn initialize_tracing_logger(
         .with_timer(LocalTimer)
         .with_ansi(enable_ansi);
 
+    let log_path = Path::new("exception.log");
+    if !log_path.exists() {
+        fs::File::create(log_path)?;
+    }
+
+    let file = fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(log_path)?;
+
+    let exception_filter = EnvFilter::default()
+        .add_directive(LevelFilter::OFF.into())
+        .add_directive("exception=error".parse()?);
+
+    let file_layer = fmt::layer()
+        .compact()
+        .with_ansi(false)
+        .with_writer(file)
+        .with_timer(LocalTimer)
+        .with_target(true)
+        .with_file(true)
+        .with_line_number(true)
+        .with_filter(exception_filter);
+
     tracing_subscriber::registry()
         .with(stdout_layer.with_filter(filter_layer))
+        .with(file_layer)
         .init();
 
     debug_with_peers!("tracing started!");
@@ -230,16 +259,13 @@ mod tests {
             "exception log not found in output:\n{output}",
         );
 
-        // NOTE: This removal of the "exception=error" directive is necessary because the global
+        // NOTE: This turn off of the "exception" directive is necessary because the global
         // tracing subscriber persists across tests. Without this cleanup, other tests
         // could be affected by the leftover directive, breaking their expected behavior.
         handle.modify(|env_filter| {
             let new_filter = env_filter
-                .to_string()
-                .split(',')
-                .filter(|s| !s.trim().starts_with("exception"))
-                .map(|s| s.parse().expect("Failed to parse"))
-                .fold(EnvFilter::default(), EnvFilter::add_directive);
+                .clone()
+                .add_directive("exception=off".parse().expect("Failed to parse"));
             *env_filter = new_filter;
         })?;
 
