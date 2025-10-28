@@ -40,6 +40,7 @@ impl FormatTime for LocalTimer {
     }
 }
 
+#[allow(clippy::disallowed_types)]
 pub fn initialize_tracing_logger(
     module_path: &str,
     always_write_style: bool,
