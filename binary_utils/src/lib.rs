@@ -7,22 +7,13 @@ use tracing_subscriber::{
     filter::LevelFilter,
     fmt,
     fmt::{format::Writer, time::FormatTime},
+    prelude::*,
     reload::{self, Handle},
     EnvFilter, Registry,
 };
-use tracing_subscriber::{layer::Layered, prelude::*};
-
-type TracingLayered = Layered<
-    fmt::Layer<
-        Registry,
-        fmt::format::DefaultFields,
-        fmt::format::Format<fmt::format::Compact, LocalTimer>,
-    >,
-    Registry,
->;
 
 #[derive(Clone)]
-pub struct TracingHandle(Handle<EnvFilter, TracingLayered>);
+pub struct TracingHandle(Handle<EnvFilter, Registry>);
 
 impl TracingHandle {
     pub fn modify<F>(&self, f: F) -> Result<(), reload::Error>
@@ -108,8 +99,7 @@ pub fn initialize_tracing_logger(
         .with_ansi(enable_ansi);
 
     tracing_subscriber::registry()
-        .with(stdout_layer)
-        .with(filter_layer)
+        .with(stdout_layer.with_filter(filter_layer))
         .init();
 
     debug_with_peers!("tracing started!");
