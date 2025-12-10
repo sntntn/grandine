@@ -215,10 +215,6 @@ ifneq ($(strip $(DOCKER_SUFFIX)),)
 override DOCKER_SUFFIX := -$(DOCKER_SUFFIX)
 endif
 
-ifneq ($(strip $(GRANDINE_VERSION)),)
-override DOCKER_SUFFIX := -$(GRANDINE_VERSION)
-endif
-
 .PHONY: docker
 docker: grandine-docker nethermind-docker
 
