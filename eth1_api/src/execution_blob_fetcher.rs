@@ -3,8 +3,8 @@ use std::{collections::HashSet, sync::Arc};
 use anyhow::Result;
 use eth2_libp2p::PeerId;
 use execution_engine::{
-    BlobAndProofV1, BlobAndProofV2, BlockOrDataColumnSidecar, EngineGetBlobsParams,
-    EngineGetBlobsV1Params, EngineGetBlobsV2Params,
+    BlobAndProofV1, BlobAndProofV2, EngineGetBlobsParams, EngineGetBlobsV1Params,
+    EngineGetBlobsV2Params,
 };
 use fork_choice_control::Wait;
 use futures::{
@@ -24,6 +24,7 @@ use types::{
         containers::{DataColumnIdentifier, DataColumnsByRootIdentifier},
         primitives::ColumnIndex,
     },
+    nonstandard::BlockOrDataColumnSidecar,
     phase0::primitives::Slot,
     preset::Preset,
     traits::SignedBeaconBlock as _,
@@ -124,9 +125,7 @@ impl<P: Preset, W: Wait> ExecutionBlobFetcher<P, W> {
                 return;
             }
 
-            if self.controller.is_forward_synced()
-                && !self.controller.store_config().disable_engine_getblobs
-            {
+            if self.controller.is_forward_synced() {
                 let versioned_hashes = kzg_commitments
                     .iter()
                     .copied()
@@ -258,9 +257,7 @@ impl<P: Preset, W: Wait> ExecutionBlobFetcher<P, W> {
             return;
         }
 
-        if self.controller.is_forward_synced()
-            && !self.controller.store_config().disable_engine_getblobs
-        {
+        if self.controller.is_forward_synced() {
             let request_timer = self
                 .metrics
                 .as_ref()
@@ -302,80 +299,48 @@ impl<P: Preset, W: Wait> ExecutionBlobFetcher<P, W> {
                                 .flat_map(IntoIterator::into_iter)
                                 .collect::<Vec<_>>();
 
-                            let timer = self.metrics.as_ref().map(|metrics| {
-                                metrics.data_column_sidecar_computation.start_timer()
-                            });
-
-                            let controller = self.controller.clone_arc();
-
-                            let reconstruction_result = tokio::task::spawn_blocking(move || {
-                                let cells_and_kzg_proofs =
-                                    eip_7594::try_convert_to_cells_and_kzg_proofs::<P>(
-                                        &received_blobs,
-                                        &cells_proofs,
-                                        controller.store_config().kzg_backend,
-                                    )?;
-
-                                let result = match block_or_sidecar {
-                                    BlockOrDataColumnSidecar::Block(block) => {
-                                        eip_7594::construct_data_column_sidecars(
-                                            &block,
-                                            &cells_and_kzg_proofs,
-                                        )
-                                    }
-                                    BlockOrDataColumnSidecar::Sidecar(sidecar) => {
-                                        eip_7594::construct_data_column_sidecars_from_sidecar(
-                                            &sidecar,
-                                            &cells_and_kzg_proofs,
-                                        )
-                                    }
-                                };
-
-                                prometheus_metrics::stop_and_record(timer);
-
-                                result
-                            })
-                            .await;
+                            let reconstruction_result =
+                                eip_7594::construct_data_column_sidecars_from_blobs(
+                                    block_or_sidecar,
+                                    received_blobs,
+                                    cells_proofs,
+                                    self.controller.store_config().kzg_backend,
+                                    self.metrics.clone(),
+                                )
+                                .await;
 
                             match reconstruction_result {
-                                Ok(cells_and_kzg_proofs) => match cells_and_kzg_proofs {
-                                    Ok(data_columns) => {
-                                        self.controller
-                                            .mark_sidecar_construction_started(block_root, slot);
+                                Ok(data_column_sidecars) => {
+                                    self.controller
+                                        .mark_sidecar_construction_started(block_root, slot);
 
-                                        for data_column_sidecar in
-                                            data_columns.into_iter().filter(|column| {
-                                                self.controller
-                                                    .sampling_columns()
-                                                    .contains(&column.index)
-                                            })
-                                        {
-                                            let identifier = DataColumnIdentifier {
-                                                block_root,
-                                                index: data_column_sidecar.index,
-                                            };
-
-                                            self.received_data_column_sidecars
-                                                .upsert_async(identifier, slot)
-                                                .await;
-
+                                    for data_column_sidecar in
+                                        data_column_sidecars.into_iter().filter(|column| {
                                             self.controller
-                                                .on_el_data_column_sidecar(data_column_sidecar);
-                                        }
+                                                .sampling_columns()
+                                                .contains(&column.index)
+                                        })
+                                    {
+                                        let identifier = DataColumnIdentifier {
+                                            block_root,
+                                            index: data_column_sidecar.index,
+                                        };
+
+                                        self.received_data_column_sidecars
+                                            .upsert_async(identifier, slot)
+                                            .await;
+
+                                        self.controller
+                                            .on_el_data_column_sidecar(data_column_sidecar);
                                     }
-                                    Err(error) => {
-                                        warn_with_peers!(
-                                            "failed to construct data column sidecars with cells and kzg_proofs: {error:?}",
-                                        );
-                                    }
-                                },
+                                }
                                 Err(error) => {
                                     self.controller
                                         .mark_sidecar_construction_failed(&block_root);
 
                                     warn_with_peers!(
-                                        "failed to convert blobs received from EL into extended cells: {error:?}",
-                                    );
+                                        "failed to reconstruct data column sidecars from EL response: {error:?}"
+                                    )
                                 }
                             }
                         } else {
