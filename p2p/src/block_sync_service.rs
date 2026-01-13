@@ -486,7 +486,7 @@ impl<P: Preset> BlockSyncService<P> {
                                 subnet_id,
                                 gossip_id,
                                 block_seen,
-                            );
+                            ).await;
                         }
                         P2pToSync::RequestedDataColumnSidecar(data_column_sidecar, peer_id, request_id, request_type) => {
                             let data_column_identifier = data_column_sidecar.as_ref().into();
@@ -494,7 +494,7 @@ impl<P: Preset> BlockSyncService<P> {
                             self.sync_manager.record_received_data_column_sidecar_response(
                                 data_column_identifier,
                                 peer_id,
-                                request_id
+                                request_id,
                             );
 
                             // Back sync does not issue DataColumnSidecarsByRoot requests
@@ -520,7 +520,11 @@ impl<P: Preset> BlockSyncService<P> {
                                             .received_block_roots
                                             .contains_key(&data_column_identifier.block_root);
 
-                                        self.controller.on_requested_data_column_sidecar(data_column_sidecar, block_seen, peer_id);
+                                        self.controller.on_requested_data_column_sidecar(
+                                            data_column_sidecar,
+                                            block_seen,
+                                            peer_id,
+                                        ).await;
                                     } else {
                                         debug_with_peers!(
                                             "received known data column sidecar: {data_column_identifier:?}, \
